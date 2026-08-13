@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/jetbrains-mono";
+
+@theme {
+  --color-ink: #08080a;
+  --color-ink-2: #0e0e12;
+  --color-ink-3: #16161c;
+  --color-bone: #f4f1ea;
+  --color-muted: #f4f1ea94;
+  --color-gold: #c8a24c;
+  --color-gold-lite: #e8d08a;
+  --color-gold-dim: #c8a24c40;
+
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --breakpoint-xs: 22rem;
+}
+
+@layer base {
+  * {
+    @apply border-gold-dim;
+  }
+
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+    scrollbar-color: var(--color-gold-dim) var(--color-ink);
+  }
+
+  body {
+    @apply bg-ink text-bone font-sans antialiased;
+    min-height: 100svh;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .text-eyebrow {
+    @apply font-mono uppercase tracking-[0.28em] text-xs text-gold;
+  }
+
+  .clip-lines {
+    overflow: clip;
+  }
+
+  .gold-sheen {
+    background: linear-gradient(
+      100deg,
+      var(--color-bone) 20%,
+      var(--color-gold-lite) 45%,
+      var(--color-gold) 55%,
+      var(--color-bone) 80%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Film grain + vignette, fixed above everything, never blocks interaction */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Cursor-tracked ambient light, driven by --mx/--my custom props */
+.cursor-light {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    var(--color-gold-dim),
+    transparent 70%
+  );
+  opacity: 0.5;
+  transition: opacity 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
