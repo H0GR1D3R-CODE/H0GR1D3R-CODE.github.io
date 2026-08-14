@@ -9,7 +9,7 @@ export function Certifications() {
   return (
     <section id="certifications" className="relative py-28 sm:py-36 bg-ink-2/40">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionHeading index="05" eyebrow="Certifications" title="Continuous, verified learning." />
+        <SectionHeading index="06" eyebrow="Certifications" title="Continuous, verified learning." />
 
         <div ref={ref} className="mt-16 divide-y divide-gold-dim border-t border-b border-gold-dim">
           {certifications.map((cert) => (

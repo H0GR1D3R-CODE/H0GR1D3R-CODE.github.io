@@ -22,8 +22,53 @@ export const profile = {
   linkedinLabel: "linkedin.com/in/nebin-stanly",
   github: "https://github.com/H0GR1D3R-CODE",
   githubLabel: "github.com/H0GR1D3R-CODE",
+  githubUsername: "H0GR1D3R-CODE",
   cvPath: "/Nebin-Stanly-CV.pdf",
 } as const;
+
+/** Domains repeated in the skills marquee — drawn from the resume's own Domain skill group. */
+export const focusAreas = [
+  "Full-Stack Web Development",
+  "Internet of Things",
+  "Cybersecurity",
+  "Mobile Applications",
+  "Generative AI",
+  "Systems Automation",
+  "Robotic Process Automation",
+] as const;
+
+export type ApproachPrinciple = {
+  title: string;
+  description: string;
+};
+
+/**
+ * Working principles, restated from the professional summary and experience
+ * bullets already in this file — not new claims, just surfaced as their own
+ * moment on the page.
+ */
+export const approach: ApproachPrinciple[] = [
+  {
+    title: "Secure by design",
+    description:
+      "Infrastructure and code get built with the vulnerability surface in mind from the start — a habit formed diagnosing network security and access-control systems in the field, not bolted on after.",
+  },
+  {
+    title: "Full-stack fluency",
+    description:
+      "Comfortable moving from a SQL schema to an Android client to a web front end on the same project, so a feature stays coherent across every layer it touches.",
+  },
+  {
+    title: "Hardware-aware software",
+    description:
+      "Time spent programming Arduino prototypes and wiring sensor networks means software decisions account for real-world latency, power, and failure modes — not just the happy path.",
+  },
+  {
+    title: "Cross-functional by habit",
+    description:
+      "Whether coordinating IT security teams, student leadership, or a choir mid-performance, the throughline is the same: keep timelines, people, and technical detail moving together.",
+  },
+];
 
 export const summary =
   "Bachelor of Computer Applications (Hons.) student with hands-on experience spanning full-stack web development, IoT architecture, and systems automation. Demonstrated capability to build responsive cross-platform applications, program hardware prototypes, and optimize generative AI model frameworks. Seeking a technical role to leverage scalable programming, secure system design, and cross-functional problem-solving skills.";
@@ -294,10 +339,12 @@ export const education: EducationItem[] = [
 
 export const navSections = [
   { id: "about", label: "About" },
+  { id: "approach", label: "Approach" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
   { id: "certifications", label: "Certs" },
+  { id: "opensource", label: "Open Source" },
   { id: "leadership", label: "Leadership" },
   { id: "awards", label: "Awards" },
   { id: "education", label: "Education" },

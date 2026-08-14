@@ -10,7 +10,7 @@ export function Leadership() {
   return (
     <section id="leadership" className="relative py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionHeading index="06" eyebrow="Leadership" title="Beyond the classroom and the codebase." />
+        <SectionHeading index="08" eyebrow="Leadership" title="Beyond the classroom and the codebase." />
 
         <div ref={ref} className="relative mt-16 pl-8 sm:pl-12">
           <TimelineSpine className="absolute left-0 top-0 bottom-0 w-4" />

@@ -39,7 +39,15 @@ export function SectionHeading({ eyebrow, title, index, align = "left", classNam
   }, [reducedMotion]);
 
   return (
-    <div className={cn(align === "center" && "text-center", className)}>
+    <div className={cn("relative", align === "center" && "text-center", className)}>
+      {index && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute -top-6 right-0 hidden lg:block font-display text-[9rem] leading-none text-gold/[0.06]"
+        >
+          {index}
+        </span>
+      )}
       <div className={cn("flex items-center gap-3 mb-4", align === "center" && "justify-center")}>
         {index && <span className="text-eyebrow opacity-70">{index}</span>}
         <span className="text-eyebrow">{eyebrow}</span>

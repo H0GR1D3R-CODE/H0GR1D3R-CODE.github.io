@@ -3,6 +3,7 @@ import { useReveal } from "@/lib/useReveal";
 import { RevealText } from "../ui/RevealText";
 import { SectionHeading } from "../ui/SectionHeading";
 import { MagneticLink } from "../ui/MagneticLink";
+import { Terminal } from "../Terminal";
 import { profile } from "@/data/resume";
 
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID as string | undefined;
@@ -44,7 +45,7 @@ export function Contact() {
   return (
     <section id="contact" className="relative py-28 sm:py-36 bg-ink-2/40">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionHeading index="09" eyebrow="Contact" title="Let's build something worth shipping." />
+        <SectionHeading index="11" eyebrow="Contact" title="Let's build something worth shipping." />
 
         <div ref={ref} className="mt-16 grid gap-16 lg:grid-cols-[0.9fr_1.1fr]">
           <RevealText as="div" className="flex flex-col gap-8">
@@ -137,6 +138,11 @@ export function Contact() {
             </form>
           </RevealText>
         </div>
+
+        <RevealText as="div" className="mt-16" delay={150}>
+          <p className="text-eyebrow mb-4">Or, poke around</p>
+          <Terminal />
+        </RevealText>
       </div>
     </section>
   );

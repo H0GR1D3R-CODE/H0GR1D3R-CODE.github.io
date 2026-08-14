@@ -1,8 +1,10 @@
 export { About } from "./About";
+export { Approach } from "./Approach";
 export { Experience } from "./Experience";
 export { Projects } from "./Projects";
 export { Skills } from "./Skills";
 export { Certifications } from "./Certifications";
+export { OpenSource } from "./OpenSource";
 export { Leadership } from "./Leadership";
 export { Awards } from "./Awards";
 export { Education } from "./Education";

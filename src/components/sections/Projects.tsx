@@ -5,14 +5,21 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { Tag } from "../ui/Tag";
 import { projects } from "@/data/resume";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { useTilt } from "@/lib/useTilt";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
 
 function ProjectPanel({ project }: { project: (typeof projects)[number] }) {
+  const tiltRef = useTilt<HTMLDivElement>(5);
+
   return (
     <article className="flex h-full w-full md:w-[70vw] lg:w-[52vw] shrink-0 flex-col justify-center md:px-4 lg:px-8">
-      <div className="rounded-3xl border border-gold-dim bg-ink-2/60 backdrop-blur-sm p-8 sm:p-12 h-full flex flex-col justify-center">
+      <div
+        ref={tiltRef}
+        className="tilt-card relative rounded-3xl border border-gold-dim bg-ink-2/60 backdrop-blur-sm p-8 sm:p-12 h-full flex flex-col justify-center overflow-hidden"
+      >
+        <div className="tilt-card-glow" aria-hidden="true" />
         <span className="font-display text-7xl sm:text-8xl text-gold/20 leading-none mb-6">
           {project.index}
         </span>
@@ -83,7 +90,7 @@ export function Projects() {
       className="relative w-full overflow-hidden py-28 sm:py-0 md:h-screen md:flex md:flex-col md:justify-center"
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 md:mb-10">
-        <SectionHeading index="03" eyebrow="Projects" title="Things I've built and broken." />
+        <SectionHeading index="04" eyebrow="Projects" title="Things I've built and broken." />
       </div>
 
       <div

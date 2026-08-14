@@ -36,7 +36,7 @@ export function Education() {
   return (
     <section id="education" className="relative py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionHeading index="08" eyebrow="Education" title="The record so far." />
+        <SectionHeading index="10" eyebrow="Education" title="The record so far." />
 
         <div ref={ref} className="relative mt-16 pl-8 sm:pl-12">
           <TimelineSpine className="absolute left-0 top-0 bottom-0 w-4" />

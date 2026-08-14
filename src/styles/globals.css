@@ -118,6 +118,91 @@
   transition: opacity 0.4s ease;
 }
 
+/* Infinite marquee track — Marquee.tsx duplicates its content once, this just slides it left. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pointer-tilt cards (useTilt) — a soft gold gloss follows the cursor via --glow-x/--glow-y. */
+.tilt-card {
+  will-change: transform;
+}
+
+.tilt-card-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    360px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(232, 208, 138, 0.14),
+    transparent 70%
+  );
+  transition: opacity 0.35s ease;
+}
+
+.tilt-card:hover .tilt-card-glow {
+  opacity: 1;
+}
+
+.tilt-card > :not(.tilt-card-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Custom cursor (CustomCursor.tsx) — native cursor is only hidden once the component confirms a fine pointer. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 999px;
+  background: var(--color-gold);
+  pointer-events: none;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 999px;
+  border: 1px solid var(--color-gold-dim);
+  pointer-events: none;
+  transition: width 0.25s ease, height 0.25s ease, margin 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.cursor-ring--active {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-color: var(--color-gold);
+  background: rgba(200, 162, 76, 0.08);
+}
+
+/* Terminal.tsx input caret */
+.terminal-caret::placeholder {
+  color: var(--color-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

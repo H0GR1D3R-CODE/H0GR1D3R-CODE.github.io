@@ -1,11 +1,14 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile } from "@/data/resume";
 import { splitChars } from "@/lib/splitText";
 import { usePrefersReducedMotion, useIsCoarsePointer } from "@/lib/usePrefersReducedMotion";
 import { scrollToId } from "@/lib/useLenis";
 import { MagneticLink } from "../ui/MagneticLink";
 import { useMagnetic } from "@/lib/useMagnetic";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ObsidianCore = lazy(() => import("./ObsidianCore"));
 
@@ -27,6 +30,8 @@ function SocialIcon({ href, label, children }: { href: string; label: string; ch
 
 export function Hero({ ready }: { ready: boolean }) {
   const nameRef = useRef<HTMLHeadingElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const coarsePointer = useIsCoarsePointer();
   const show3d = !reducedMotion && !coarsePointer;
@@ -62,8 +67,39 @@ export function Hero({ ready }: { ready: boolean }) {
     return () => ctx.revert();
   }, [ready, reducedMotion]);
 
+  // Content eases out — fading, sinking, and slightly scaling down — as the
+  // hero scrolls out of view, so the transition into About feels directed
+  // rather than the section just sliding away.
+  useEffect(() => {
+    if (reducedMotion) return;
+    const content = contentRef.current;
+    const section = sectionRef.current;
+    if (!content || !section) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(content, {
+        opacity: 0,
+        y: 80,
+        scale: 0.96,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.4,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, [reducedMotion]);
+
   return (
-    <section id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden pt-24">
+    <section
+      id="hero"
+      ref={sectionRef}
+      className="relative flex min-h-[100svh] items-center overflow-hidden pt-24"
+    >
       {/* Ambient background orb — CSS fallback always renders; 3D layers on top when supported */}
       <div
         className="pointer-events-none absolute right-[-10%] top-1/2 h-[70vmin] w-[70vmin] -translate-y-1/2 rounded-full opacity-70 blur-3xl"
@@ -82,7 +118,7 @@ export function Hero({ ready }: { ready: boolean }) {
         </div>
       )}
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div ref={contentRef} className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10">
         <p data-hero-fade className="text-eyebrow mb-6">
           {profile.role} — {profile.location}
         </p>
