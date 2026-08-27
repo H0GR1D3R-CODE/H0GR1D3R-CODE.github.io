@@ -82,7 +82,7 @@ export function Contact() {
             </div>
           </RevealText>
 
-          <RevealText as="div" className="flex flex-col gap-5" delay={100}>
+          <RevealText as="div" className="no-print flex flex-col gap-5" delay={100}>
             <form onSubmit={onSubmit} className="flex flex-col gap-5">
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
@@ -139,7 +139,7 @@ export function Contact() {
           </RevealText>
         </div>
 
-        <RevealText as="div" className="mt-16" delay={150}>
+        <RevealText as="div" className="no-print mt-16" delay={150}>
           <p className="text-eyebrow mb-4">Or, poke around</p>
           <Terminal />
         </RevealText>

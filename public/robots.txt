@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://h0gr1d3r-code.github.io/sitemap.xml

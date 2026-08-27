@@ -68,6 +68,15 @@ export function Footer() {
         </div>
       </div>
 
+      <div aria-hidden="true" className="mx-auto max-w-7xl px-6 sm:px-10">
+        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.15em] text-muted">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold" style={{ animation: "signal-eq 3.6s ease-in-out infinite" }} />
+          <span>build {__BUILD_COMMIT__}</span>
+          <span className="text-gold-dim">·</span>
+          <span>deployed {new Date(__BUILD_DATE__).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</span>
+        </div>
+      </div>
+
       <div className="overflow-hidden">
         <div
           ref={nameRef}
@@ -78,10 +87,18 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-10">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 mt-10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted">
           © {year} {profile.name}. Designed &amp; built from scratch.
         </p>
+        <a
+          href={profile.repoUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted hover:text-gold transition-colors"
+        >
+          This site is open source →
+        </a>
       </div>
     </footer>
   );

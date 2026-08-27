@@ -24,6 +24,7 @@ export const profile = {
   githubLabel: "github.com/H0GR1D3R-CODE",
   githubUsername: "H0GR1D3R-CODE",
   cvPath: "/Nebin-Stanly-CV.pdf",
+  repoUrl: "https://github.com/H0GR1D3R-CODE/H0GR1D3R-CODE.github.io",
 } as const;
 
 /** Domains repeated in the skills marquee — drawn from the resume's own Domain skill group. */
