@@ -10,6 +10,41 @@ import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Deterministic pseudo-random bar heights from a string seed — every project gets its own fingerprint, not a shared placeholder graphic. */
+function seededWave(seed: string, bars: number) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const values: number[] = [];
+  for (let i = 0; i < bars; i++) {
+    h = (h * 1103515245 + 12345) >>> 0;
+    values.push(18 + (h % 82));
+  }
+  return values;
+}
+
+function WaveformSignature({ seed }: { seed: string }) {
+  const bars = seededWave(seed, 26);
+  return (
+    <div className="flex h-9 items-end gap-[3px] opacity-60" aria-hidden="true">
+      {bars.map((h, i) => (
+        <span key={i} className="w-[3px] rounded-full bg-gold" style={{ height: `${h}%` }} />
+      ))}
+    </div>
+  );
+}
+
+function CornerBrackets() {
+  const shared = "pointer-events-none absolute h-4 w-4 border-gold/50";
+  return (
+    <>
+      <span className={`${shared} left-4 top-4 border-l border-t`} aria-hidden="true" />
+      <span className={`${shared} right-4 top-4 border-r border-t`} aria-hidden="true" />
+      <span className={`${shared} bottom-4 left-4 border-b border-l`} aria-hidden="true" />
+      <span className={`${shared} bottom-4 right-4 border-b border-r`} aria-hidden="true" />
+    </>
+  );
+}
+
 function ProjectPanel({ project }: { project: (typeof projects)[number] }) {
   const tiltRef = useTilt<HTMLDivElement>(5);
 
@@ -17,12 +52,17 @@ function ProjectPanel({ project }: { project: (typeof projects)[number] }) {
     <article className="flex h-full w-full md:w-[70vw] lg:w-[52vw] shrink-0 flex-col justify-center md:px-4 lg:px-8">
       <div
         ref={tiltRef}
-        className="tilt-card relative rounded-3xl border border-gold-dim bg-ink-2/60 backdrop-blur-sm p-8 sm:p-12 h-full flex flex-col justify-center overflow-hidden"
+        className="tilt-card scanlines relative flex h-full flex-col justify-center overflow-hidden border border-gold-dim bg-ink-2/60 p-8 backdrop-blur-sm sm:p-12"
       >
         <div className="tilt-card-glow" aria-hidden="true" />
-        <span className="font-display text-7xl sm:text-8xl text-gold/20 leading-none mb-6">
-          {project.index}
-        </span>
+        <CornerBrackets />
+
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-gold/70">
+            Track {project.index}
+          </span>
+          <WaveformSignature seed={project.title} />
+        </div>
 
         <h3 className="font-display text-3xl sm:text-4xl text-bone leading-tight mb-4">
           {project.title}
@@ -90,7 +130,7 @@ export function Projects() {
       className="relative w-full overflow-hidden py-28 sm:py-0 md:h-screen md:flex md:flex-col md:justify-center"
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 md:mb-10">
-        <SectionHeading index="04" eyebrow="Projects" title="Things I've built and broken." />
+        <SectionHeading eyebrow="Projects" title="Things I've built and broken." />
       </div>
 
       <div

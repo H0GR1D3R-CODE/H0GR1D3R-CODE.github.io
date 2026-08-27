@@ -203,6 +203,63 @@ html.custom-cursor-active * {
   color: var(--color-muted);
 }
 
+/* About.tsx editorial opening paragraph */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.2em;
+  line-height: 0.78;
+  float: left;
+  padding-right: 0.09em;
+  padding-top: 0.03em;
+  color: var(--color-gold);
+}
+
+/* About.tsx EQ-style language bars — a slow idle breathe, like a live meter at rest. */
+.signal-eq {
+  animation: signal-eq 3.6s ease-in-out infinite;
+  animation-delay: var(--eq-delay, 0s);
+}
+@keyframes signal-eq {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.18);
+  }
+}
+
+/* Approach.tsx stage connectors — a pulse traveling from one stage to the next. */
+.signal-pulse {
+  animation: signal-pulse 2.4s ease-in-out infinite;
+}
+@keyframes signal-pulse {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Projects.tsx readout panels — a faint CRT scanline texture over the card. */
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(244, 241, 234, 0.028) 0px,
+    rgba(244, 241, 234, 0.028) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

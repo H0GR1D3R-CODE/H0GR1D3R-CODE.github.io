@@ -47,7 +47,7 @@ export function Contact() {
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <SectionHeading index="11" eyebrow="Contact" title="Let's build something worth shipping." />
 
-        <div ref={ref} className="mt-16 grid gap-16 lg:grid-cols-[0.9fr_1.1fr]">
+        <div ref={ref} className="mt-16 grid grid-cols-1 gap-16 lg:grid-cols-[0.9fr_1.1fr]">
           <RevealText as="div" className="flex flex-col gap-8">
             <p className="text-lg text-muted leading-relaxed max-w-md">
               Open to internships, collaborations, and technical roles across full-stack, IoT, and

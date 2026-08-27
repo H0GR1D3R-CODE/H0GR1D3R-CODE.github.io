@@ -35,7 +35,7 @@ export function Awards() {
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <SectionHeading index="09" eyebrow="Awards" title="Recognized along the way." />
 
-        <div ref={ref} className="mt-16 grid gap-6 md:grid-cols-3">
+        <div ref={ref} className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
           {awards.map((award) => (
             <RevealText key={award.title} as="div">
               <AwardCard award={award} />

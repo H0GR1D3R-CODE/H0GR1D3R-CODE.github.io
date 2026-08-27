@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLenis } from "@/lib/useLenis";
 import { useScrollTriggerRefresh } from "@/lib/useScrollTriggerRefresh";
 import { Preloader } from "./components/Preloader";
@@ -10,6 +10,7 @@ import { Nav } from "./components/Nav";
 import { SectionRail } from "./components/SectionRail";
 import { Hero } from "./components/hero/Hero";
 import { StatementBreak } from "./components/ui/StatementBreak";
+import { SignalSpine } from "./components/ui/SignalSpine";
 import {
   About,
   Approach,
@@ -27,6 +28,7 @@ import {
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const pageRef = useRef<HTMLDivElement | null>(null);
   useLenis();
   useScrollTriggerRefresh(ready);
 
@@ -40,23 +42,27 @@ export default function App() {
       <Nav />
       <SectionRail />
 
-      <main>
-        <Hero ready={ready} />
-        <About />
-        <Approach />
-        <Experience />
-        <StatementBreak text="Three domains, one obsession: shipping things that actually work in the real world." />
-        <Projects />
-        <Skills />
-        <Certifications />
-        <OpenSource />
-        <Leadership />
-        <Awards />
-        <Education />
-        <Contact />
-      </main>
+      <div ref={pageRef} className="relative">
+        <SignalSpine containerRef={pageRef} />
 
-      <Footer />
+        <main>
+          <Hero ready={ready} />
+          <About />
+          <Approach />
+          <Experience />
+          <StatementBreak text="Three domains, one obsession: shipping things that actually work in the real world." />
+          <Projects />
+          <Skills />
+          <Certifications />
+          <OpenSource />
+          <Leadership />
+          <Awards />
+          <Education />
+          <Contact />
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
 }

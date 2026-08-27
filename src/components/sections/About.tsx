@@ -1,20 +1,23 @@
 import { useReveal } from "@/lib/useReveal";
 import { RevealText } from "../ui/RevealText";
 import { SectionHeading } from "../ui/SectionHeading";
-import { languages, summary } from "@/data/resume";
+import { languages, summary, type Language } from "@/data/resume";
 
-function LanguageMeter({ name, level, weight }: { name: string; level: string; weight: number }) {
+/** A thin vertical bar reading like a mixer channel — proficiency as signal strength, not a generic progress bar. */
+function EqBar({ name, level, weight, delay }: Language & { delay: number }) {
   return (
-    <div data-reveal>
-      <div className="flex items-baseline justify-between mb-2">
-        <span className="font-display text-lg text-bone">{name}</span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted">{level}</span>
-      </div>
-      <div className="h-px w-full bg-gold-dim overflow-hidden">
+    <div data-reveal className="flex min-w-0 flex-col items-center gap-3">
+      <div className="relative flex h-24 w-2.5 items-end overflow-hidden rounded-full bg-ink-3">
         <div
-          className="h-full bg-gradient-to-r from-gold to-gold-lite origin-left"
-          style={{ width: `${weight * 100}%` }}
+          className="signal-eq w-full rounded-full bg-gradient-to-t from-gold to-gold-lite"
+          style={{ height: `${weight * 100}%`, "--eq-delay": `${delay}s` } as React.CSSProperties}
         />
+      </div>
+      <div className="text-center">
+        <p className="font-display text-sm text-bone">{name}</p>
+        <p className="mt-0.5 font-mono text-[9px] uppercase leading-tight tracking-[0.1em] text-muted">
+          {level}
+        </p>
       </div>
     </div>
   );
@@ -26,32 +29,31 @@ export function About() {
   return (
     <section id="about" className="relative py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionHeading index="01" eyebrow="About" title="A little about the person behind the code." />
+        <SectionHeading eyebrow="About" title="A little about the person behind the code." />
 
-        <div ref={ref} className="mt-16 grid gap-16 lg:grid-cols-[1.1fr_0.9fr]">
-          {/* Portrait placeholder — drop an image at src/assets/portrait.jpg to replace */}
-          <div data-reveal className="order-2 lg:order-1">
-            <div className="relative mx-auto max-w-sm">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-gold-dim bg-gradient-to-br from-ink-2 via-ink-3 to-ink-2 flex items-center justify-center">
-                <span className="font-display text-8xl text-gold/40 select-none">NS</span>
+        <div ref={ref} className="mt-16 grid grid-cols-1 gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+          <RevealText
+            as="p"
+            className="dropcap max-w-2xl text-xl leading-relaxed text-muted sm:text-2xl"
+          >
+            {summary}
+          </RevealText>
+
+          <div data-reveal className="flex flex-col gap-14">
+            {/* Portrait placeholder — drop an image at src/assets/portrait.jpg to replace */}
+            <div className="relative ml-auto max-w-[260px]">
+              <div className="pointer-events-none absolute -left-3 -top-3 h-full w-full border border-gold/40" />
+              <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden bg-gradient-to-br from-ink-2 via-ink-3 to-ink-2">
+                <span className="select-none font-display text-8xl text-gold/40">NS</span>
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(232,208,138,0.18),transparent_60%)]" />
               </div>
-              <div className="pointer-events-none absolute -inset-3 -z-10 rounded-[2rem] border border-gold-dim/50" />
             </div>
-          </div>
-
-          <div className="order-1 lg:order-2 flex flex-col gap-12">
-            <RevealText as="p" className="text-lg sm:text-xl leading-relaxed text-muted">
-              {summary}
-            </RevealText>
 
             <div className="flex flex-col gap-6">
-              <RevealText as="p" className="text-eyebrow">
-                Languages
-              </RevealText>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {languages.map((lang) => (
-                  <LanguageMeter key={lang.name} {...lang} />
+              <p className="text-eyebrow text-right lg:text-left">Signal strength, by language</p>
+              <div className="grid grid-cols-5 gap-2 sm:gap-4">
+                {languages.map((lang, i) => (
+                  <EqBar key={lang.name} {...lang} delay={i * 0.4} />
                 ))}
               </div>
             </div>
