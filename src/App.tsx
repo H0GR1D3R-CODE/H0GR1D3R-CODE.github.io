@@ -15,6 +15,7 @@ import { StatementBreak } from "./components/ui/StatementBreak";
 import { SignalSpine } from "./components/ui/SignalSpine";
 import {
   About,
+  Metrics,
   Approach,
   Experience,
   Projects,
@@ -56,6 +57,7 @@ export default function App() {
         <main id="main-content">
           <Hero ready={ready} />
           <About />
+          <Metrics />
           <Approach />
           <Experience />
           <StatementBreak text="Three domains, one obsession: shipping things that actually work in the real world." />

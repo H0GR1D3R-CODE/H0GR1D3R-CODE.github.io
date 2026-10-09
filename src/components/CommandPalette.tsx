@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { navSections, profile } from "@/data/resume";
+import { navSections, profile, projects } from "@/data/resume";
 import { scrollToId } from "@/lib/useLenis";
 
 type Command = {
   id: string;
   label: string;
-  group: "Navigate" | "Contact" | "Résumé";
+  group: "Navigate" | "Live demos" | "Contact" | "Résumé";
   keywords?: string;
   run: () => void;
 };
@@ -34,6 +34,17 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
         group: "Navigate" as const,
         run: () => scrollToId(s.id),
       })),
+      ...projects.flatMap((p) =>
+        p.links
+          .filter((l) => l.kind === "live")
+          .map((l) => ({
+            id: `live-${p.index}`,
+            label: `Open live demo — ${p.title.split(" — ")[0].split(" using ")[0]}`,
+            group: "Live demos" as const,
+            keywords: `${p.title} ${p.tech.join(" ")} demo`,
+            run: () => window.open(l.href, "_blank", "noopener,noreferrer"),
+          }))
+      ),
       {
         id: "copy-email",
         label: `Copy email — ${profile.email}`,

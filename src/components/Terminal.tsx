@@ -7,6 +7,7 @@ import {
   experience,
   certifications,
   focusAreas,
+  repos,
 } from "@/data/resume";
 
 type Line = { kind: "in" | "out"; text: string };
@@ -25,6 +26,8 @@ function buildResponse(raw: string): string[] {
         "  about        — who this is",
         "  skills       — technical toolkit",
         "  projects     — things that got built",
+        "  repos        — everything on GitHub",
+        "  live         — projects with a live demo",
         "  experience   — where it's been applied",
         "  certs        — certifications on file",
         "  focus        — domains currently worked in",
@@ -41,6 +44,14 @@ function buildResponse(raw: string): string[] {
       return skills.map((g) => `${g.label.padEnd(14)}: ${g.items.join(", ")}`);
     case "projects":
       return projects.map((p) => `[${p.index}] ${p.title} — ${p.tech.join(" / ")}`);
+    case "repos":
+    case "github":
+      return [
+        `${repos.length} repositories at ${profile.githubLabel}`,
+        ...repos.map((r) => `  ${r.name.padEnd(28)} ${r.language}`),
+      ];
+    case "live":
+      return repos.filter((r) => r.live).map((r) => `${r.name.padEnd(28)} ${r.live}`);
     case "experience":
       return experience.map((e) => `${e.role} @ ${e.org} (${e.start} – ${e.end})`);
     case "certs":
@@ -54,7 +65,7 @@ function buildResponse(raw: string): string[] {
     case "sudo hire nebin":
       return ["Permission granted. Redirecting to the contact form below…", "[scroll down, it's right there]"];
     case "ls":
-      return ["about  skills  projects  experience  certs  focus  contact"];
+      return ["about  skills  projects  repos  live  experience  certs  focus  contact"];
     case "clear":
       return ["__CLEAR__"];
     default:

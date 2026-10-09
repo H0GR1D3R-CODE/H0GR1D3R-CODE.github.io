@@ -24,7 +24,7 @@ export function Skills() {
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <div ref={ref} className="mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2">
           {skills.map((group) => (
-            <RevealText key={group.label} as="div" className="rounded-2xl border border-gold-dim p-8">
+            <RevealText key={group.label} as="div" className="rounded-2xl border border-gold-dim p-8 sm:[&:last-child:nth-child(odd)]:col-span-2">
               <h3 className="font-display text-xl text-gold mb-5">{group.label}</h3>
               <div className="flex flex-wrap gap-2">
                 {group.items.map((item) => (

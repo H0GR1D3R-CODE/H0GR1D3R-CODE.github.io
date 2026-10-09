@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SectionHeading } from "../ui/SectionHeading";
 import { Tag } from "../ui/Tag";
-import { projects } from "@/data/resume";
+import { projects, type Project, type ProjectLink } from "@/data/resume";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { useTilt } from "@/lib/useTilt";
 import { cn } from "@/lib/cn";
@@ -45,38 +45,74 @@ function CornerBrackets() {
   );
 }
 
-function ProjectPanel({ project }: { project: (typeof projects)[number] }) {
+function dateRange(p: Project) {
+  return p.start === p.end ? p.start : `${p.start} — ${p.end}`;
+}
+
+function ProjectLinkButton({ link }: { link: ProjectLink }) {
+  const live = link.kind === "live";
+  return (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-300",
+        live
+          ? "bg-gold text-ink hover:bg-gold-lite"
+          : "border border-gold-dim text-bone hover:border-gold hover:text-gold"
+      )}
+    >
+      {link.label}
+      <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
+function ProjectPanel({ project }: { project: Project }) {
   const tiltRef = useTilt<HTMLDivElement>(5);
 
   return (
-    <article className="flex h-full w-full md:w-[70vw] lg:w-[52vw] shrink-0 flex-col justify-center md:px-4 lg:px-8">
+    <article className="flex w-full flex-1">
       <div
         ref={tiltRef}
-        className="tilt-card scanlines relative flex h-full flex-col justify-center overflow-hidden border border-gold-dim bg-ink-2/60 p-8 backdrop-blur-sm sm:p-12"
+        className="tilt-card scanlines relative flex w-full flex-col justify-center overflow-hidden border border-gold-dim bg-ink-2/60 p-7 backdrop-blur-sm sm:p-9 lg:p-8 [@media(max-height:820px)]:lg:p-7"
       >
         <div className="tilt-card-glow" aria-hidden="true" />
         <CornerBrackets />
 
-        <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-gold/70">
             Track {project.index}
+            {!project.onResume && <span className="ml-3 text-gold">· New on GitHub</span>}
           </span>
           <WaveformSignature seed={project.title} />
         </div>
 
-        <h3 className="font-display text-3xl sm:text-4xl text-bone leading-tight mb-4">
-          {project.title}
-        </h3>
+        <h3 className="font-display text-2xl sm:text-3xl [@media(max-height:820px)]:lg:text-2xl text-bone leading-tight mb-2">{project.title}</h3>
 
-        <p className="font-mono text-xs uppercase tracking-[0.15em] text-gold mb-6">
-          {project.start} — {project.end}
-        </p>
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-gold mb-3">{dateRange(project)}</p>
 
-        <p className="text-muted leading-relaxed mb-8 max-w-xl">{project.description}</p>
+        <p className="text-muted leading-relaxed mb-3 max-w-2xl">{project.summary}</p>
 
-        <div className="flex flex-wrap gap-2">
+        <ul className="mb-4 flex max-w-2xl flex-col gap-2">
+          {project.highlights.map((h) => (
+            <li key={h} className="flex gap-3 text-sm leading-relaxed text-bone/80">
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-gold" />
+              {h}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mb-5 flex flex-wrap gap-2">
           {project.tech.map((t) => (
             <Tag key={t}>{t}</Tag>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          {project.links.map((l) => (
+            <ProjectLinkButton key={l.href} link={l} />
           ))}
         </div>
       </div>
@@ -141,7 +177,7 @@ export function Projects() {
         )}
       >
         {projects.map((p) => (
-          <div key={p.title} className="md:h-[60vh] h-auto">
+          <div key={p.title} className="flex md:w-[82vw] lg:w-[56vw] md:shrink-0">
             <ProjectPanel project={p} />
           </div>
         ))}

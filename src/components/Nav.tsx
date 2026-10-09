@@ -34,13 +34,13 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
           {profile.initials}
         </a>
 
-        <nav className="hidden lg:flex items-center gap-7 rounded-full border border-gold-dim bg-ink/60 backdrop-blur-md px-7 py-3">
+        <nav className="hidden xl:flex items-center gap-5 2xl:gap-6 rounded-full border border-gold-dim bg-ink/60 backdrop-blur-md px-6 py-3">
           {navSections.map((s) => (
             <button
               key={s.id}
               onClick={() => scrollTo(s.id)}
               className={cn(
-                "font-mono text-[11px] uppercase tracking-[0.15em] transition-colors",
+                "whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.1em] transition-colors",
                 active === s.id ? "text-gold" : "text-muted hover:text-bone"
               )}
             >
@@ -53,10 +53,10 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
           <button
             onClick={onOpenPalette}
             aria-label="Open command palette"
-            className="hidden items-center gap-2 rounded-full border border-gold-dim bg-ink/60 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-muted backdrop-blur-md transition-colors hover:text-gold sm:flex"
+            className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-gold-dim bg-ink/60 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-muted backdrop-blur-md transition-colors hover:text-gold sm:flex"
           >
             <span>Search</span>
-            <kbd className="rounded border border-gold-dim px-1.5 py-0.5 text-[10px] text-gold">
+            <kbd className="whitespace-nowrap rounded border border-gold-dim px-1.5 py-0.5 text-[10px] text-gold">
               {isMac ? "⌘K" : "Ctrl K"}
             </kbd>
           </button>
@@ -65,7 +65,7 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label="Toggle navigation menu"
-            className="lg:hidden flex flex-col gap-1.5 rounded-full border border-gold-dim bg-ink/60 backdrop-blur-md p-3"
+            className="xl:hidden flex flex-col gap-1.5 rounded-full border border-gold-dim bg-ink/60 backdrop-blur-md p-3"
           >
             <span className={cn("block h-px w-5 bg-bone transition-transform", open && "translate-y-[3px] rotate-45")} />
             <span className={cn("block h-px w-5 bg-bone transition-transform", open && "-translate-y-[3px] -rotate-45")} />
@@ -74,7 +74,7 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
       </div>
 
       {open && (
-        <nav className="lg:hidden mx-6 mb-4 rounded-2xl border border-gold-dim bg-ink-2/95 backdrop-blur-md px-6 py-5 flex flex-col gap-4">
+        <nav className="xl:hidden mx-6 mb-4 rounded-2xl border border-gold-dim bg-ink-2/95 backdrop-blur-md px-6 py-5 flex flex-col gap-4">
           {navSections.map((s) => (
             <button
               key={s.id}

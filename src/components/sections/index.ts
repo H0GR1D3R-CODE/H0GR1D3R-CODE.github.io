@@ -1,4 +1,5 @@
 export { About } from "./About";
+export { Metrics } from "./Metrics";
 export { Approach } from "./Approach";
 export { Experience } from "./Experience";
 export { Projects } from "./Projects";

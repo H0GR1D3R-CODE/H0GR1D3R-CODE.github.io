@@ -15,13 +15,7 @@ Opens at `http://localhost:5173`.
 
 All copy lives in one place: [`src/data/resume.ts`](src/data/resume.ts). Edit it there — no need to touch component files for text changes.
 
-The three project descriptions are **drafted, not verified** (the resume only lists project titles + tech + dates, no descriptions). Each one is marked in `resume.ts` with:
-
-```ts
-// TODO: VERIFY — drafted from resume title, confirm before publishing
-```
-
-Rewrite or approve those before treating the site as final.
+Content is sourced from the résumé PDF (experience, education, metrics, certifications, skills) and the READMEs of the public GitHub repos (the extra projects and the repo archive). When the résumé changes, update `resume.ts` and replace `public/Nebin-Stanly-CV.pdf`.
 
 ## Portrait photo
 

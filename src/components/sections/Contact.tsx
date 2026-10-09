@@ -50,8 +50,8 @@ export function Contact() {
         <div ref={ref} className="mt-16 grid grid-cols-1 gap-16 lg:grid-cols-[0.9fr_1.1fr]">
           <RevealText as="div" className="flex flex-col gap-8">
             <p className="text-lg text-muted leading-relaxed max-w-md">
-              Open to internships, collaborations, and technical roles across full-stack, IoT, and
-              applied AI. Reach out directly, or use the form.
+              Open to internships, collaborations, and technical roles across full-stack, machine
+              learning, and IoT. Reach out directly, or use the form.
             </p>
 
             <div className="flex flex-col gap-4">

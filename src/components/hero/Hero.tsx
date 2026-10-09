@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { profile } from "@/data/resume";
+import { profile, projects } from "@/data/resume";
 import { splitChars } from "@/lib/splitText";
 import { usePrefersReducedMotion, useIsCoarsePointer } from "@/lib/usePrefersReducedMotion";
 import { scrollToId } from "@/lib/useLenis";
@@ -9,6 +9,9 @@ import { MagneticLink } from "../ui/MagneticLink";
 import { useMagnetic } from "@/lib/useMagnetic";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Corridor is the newest project and the first to carry a live demo link.
+const latest = projects.find((p) => p.title.startsWith("Corridor")) ?? projects[0];
 
 const ObsidianCore = lazy(() => import("./ObsidianCore"));
 
@@ -133,6 +136,18 @@ export function Hero({ ready }: { ready: boolean }) {
         <p data-hero-fade className="mt-8 max-w-xl text-base sm:text-lg text-muted leading-relaxed">
           {profile.tagline} Currently pursuing {profile.degree} at {profile.university}.
         </p>
+
+        <a
+          data-hero-fade
+          href={latest.links[0].href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="mt-6 inline-flex max-w-full items-center gap-3 rounded-full border border-gold-dim px-4 py-2 font-mono text-[10px] uppercase tracking-[0.15em] text-muted transition-colors hover:border-gold hover:text-gold"
+        >
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" style={{ animation: "signal-eq 3.6s ease-in-out infinite" }} aria-hidden="true" />
+          <span className="truncate">Latest — {latest.title.split(" — ")[0]} · {latest.start}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
 
         <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
           <MagneticLink href="#projects" variant="solid" onClick={(e) => {
