@@ -48,7 +48,7 @@ export function HeroBackdrop() {
       <svg
         viewBox="0 0 1200 300"
         preserveAspectRatio="xMidYMax slice"
-        className="parallax-far absolute inset-x-0 bottom-0 h-[42%] w-full"
+        className="parallax-far absolute inset-x-0 bottom-0 h-[26%] w-full"
         focusable="false"
       >
         <path d="M-40 190 C 150 120, 330 210, 520 150 S 840 80, 1010 140 S 1160 180, 1240 130 V300 H-40 Z" fill="var(--ridge-far)" />
@@ -63,13 +63,13 @@ export function HeroBackdrop() {
       <svg
         viewBox="0 0 1200 300"
         preserveAspectRatio="xMidYMax slice"
-        className="parallax-near absolute inset-x-0 bottom-0 h-[30%] w-full"
+        className="parallax-near absolute inset-x-0 bottom-0 h-[17%] w-full"
         focusable="false"
       >
         <path d="M-40 200 C 190 130, 420 230, 640 180 S 900 110, 1020 150 S 1150 200, 1240 160 V300 H-40 Z" fill="var(--ridge-near)" />
       </svg>
 
-      <Snowfall />
+      <Snowfall density={0.45} />
     </div>
   );
 }
@@ -80,14 +80,14 @@ export function HeroDrift() {
     <svg
       viewBox="0 0 1200 120"
       preserveAspectRatio="xMidYMax slice"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(5rem,9vw,7.5rem)] w-full overflow-visible"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[clamp(5rem,9vw,7.5rem)] w-full overflow-visible"
       aria-hidden="true"
       focusable="false"
     >
       <defs>
         <HatGradient id="hat-hero-sled" />
       </defs>
-      <Hill d={HERO_HILL} fill="var(--bg)" id="hat-hero-sled" />
+      <Hill d={HERO_HILL} fill="var(--page-bg)" id="hat-hero-sled" />
     </svg>
   );
 }
@@ -102,7 +102,7 @@ const RUN_HILL = "M-90 96 C 110 70, 280 150, 470 128 S 700 96, 820 150 S 1080 19
 export function SledRun({ phrase }: { phrase: string }) {
   return (
     <div className="sled-scene relative overflow-clip bg-linear-to-b from-(--bg) to-(--sky-top)" aria-hidden="true">
-      <p className="ghost-phrase select-none pt-10 text-[clamp(4rem,15vw,13.5rem)] sm:pt-14">{phrase}</p>
+      <p className="ghost-phrase select-none pt-10 text-[clamp(4.5rem,17vw,15rem)] sm:pt-14">{phrase}</p>
       <svg
         viewBox="0 0 1200 240"
         preserveAspectRatio="xMidYMax slice"

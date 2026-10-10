@@ -22,7 +22,7 @@ function makeFlake(w: number, h: number, anywhere: boolean): Flake {
  * the scene its depth. The canvas only animates while it is on screen and
  * the tab is visible, and it is never drawn at all for reduced motion.
  */
-export function Snowfall({ className }: { className?: string }) {
+export function Snowfall({ className, density = 1 }: { className?: string; density?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const reduced = usePrefersReducedMotion();
 
@@ -52,7 +52,7 @@ export function Snowfall({ className }: { className?: string }) {
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const wanted = Math.round(Math.min(Math.max((w * h) / 13000, 26), 110));
+      const wanted = Math.round(Math.min(Math.max((w * h) / 13000, 26), 110) * density);
       flakes = Array.from({ length: wanted }, () => makeFlake(w, h, true));
     };
 
@@ -108,7 +108,7 @@ export function Snowfall({ className }: { className?: string }) {
       themeWatcher.disconnect();
       document.removeEventListener("visibilitychange", start);
     };
-  }, [reduced]);
+  }, [reduced, density]);
 
   if (reduced) return null;
 

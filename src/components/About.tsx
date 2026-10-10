@@ -18,11 +18,19 @@ export function About() {
         </div>
 
         <div className="lg:col-span-8">
-          <h2 id="about-title" className="rise font-display text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl">
+          <h2 id="about-title" className="rise title">
             About
           </h2>
-          <div className="mt-6 flex max-w-[44rem] flex-col gap-4 text-lg">
-            {about.map((paragraph, i) => (
+          {/* The first paragraph is the statement: large, and it inks in a word at a time as it is scrolled past. */}
+          <p className="statement mt-7 max-w-[46rem] font-display text-[clamp(1.5rem,1.1rem+1.5vw,2.25rem)] font-semibold leading-[1.18] tracking-[-0.025em]">
+            {about[0].split(" ").map((word, i) => (
+              <span key={i} className="ink-in" style={{ "--w": i } as CSSProperties}>
+                {word}{" "}
+              </span>
+            ))}
+          </p>
+          <div className="mt-7 flex max-w-[44rem] flex-col gap-4 text-lg">
+            {about.slice(1).map((paragraph, i) => (
               <p key={paragraph} className="rise" style={{ "--i": i } as CSSProperties}>
                 {paragraph}
               </p>
@@ -33,12 +41,12 @@ export function About() {
           <dl className="mt-5 grid gap-x-10 gap-y-6 sm:grid-cols-2">
             {skills.map((group, i) => (
               <div key={group.label} className="rise" style={{ "--i": i % 2 } as CSSProperties}>
-                <dt className="font-display font-bold">{group.label}</dt>
+                <dt className="font-semibold">{group.label}</dt>
                 <dd className="mt-1 text-ink-2">{group.items.join(", ")}</dd>
               </div>
             ))}
             <div className="rise sm:col-span-2">
-              <dt className="font-display font-bold">Spoken languages</dt>
+              <dt className="font-semibold">Spoken languages</dt>
               <dd className="mt-1 text-ink-2">{spokenSummary()}</dd>
             </div>
           </dl>

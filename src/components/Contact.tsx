@@ -7,7 +7,7 @@ export function Contact() {
   return (
     <section id="contact" aria-labelledby="contact-title" className="bg-bg-2 pt-16 sm:pt-24">
       <div className="mx-auto max-w-[76rem] px-4 sm:px-8">
-        <h2 id="contact-title" className="rise font-display text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl">
+        <h2 id="contact-title" className="rise title">
           Contact
         </h2>
         <p className="rise mt-3 max-w-xl text-lg text-ink-2">
@@ -17,7 +17,7 @@ export function Contact() {
 
         <a
           href={`mailto:${profile.email}`}
-          className="link rise mt-8 inline-block break-all py-1 font-display text-[clamp(1.5rem,1rem+2.6vw,3rem)] font-extrabold leading-tight tracking-[-0.02em]"
+          className="link rise mt-8 inline-block break-all py-1 font-display text-[clamp(1.5rem,1rem+2.8vw,3.25rem)] font-extrabold leading-tight tracking-[-0.025em]"
         >
           {profile.email}
         </a>
@@ -61,7 +61,7 @@ export function Footer() {
           href={profile.repoUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex min-h-9 items-center font-display font-bold underline decoration-2 underline-offset-4 hover:decoration-[#0b1622]/40"
+          className="inline-flex min-h-9 items-center font-semibold underline decoration-2 underline-offset-4 hover:decoration-[#0b1622]/40"
         >
           Source for this site
         </a>

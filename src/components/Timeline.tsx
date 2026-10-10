@@ -20,7 +20,7 @@ function Kind({ entry }: { entry: TimelineEntry }) {
   return (
     <span
       className={cn(
-        "rounded-md px-2 pb-0.5 pt-1 font-display text-xs font-bold leading-none",
+        "rounded-md px-2 py-1 text-xs font-semibold leading-none",
         entry.kind === "Work" ? "bg-straw text-on-straw" : "border border-edge text-ink-2"
       )}
     >
@@ -80,7 +80,7 @@ function Rider() {
       <div className="timeline-rider">
         <span className="timeline-travelled" />
         <svg viewBox="-16 -16 32 22" className="absolute left-1/2 top-0 w-9 -translate-x-1/2 -translate-y-[70%]" focusable="false">
-          <path d="M-13 0 Q0 4.5 13 0 L0 -12 Z" fill="var(--straw)" stroke="var(--map-route-case)" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M-13 0 Q0 4.5 13 0 L0 -12 Z" fill="var(--straw)" stroke="#0b1622" strokeWidth="1.5" strokeLinejoin="round" />
         </svg>
       </div>
     </div>
@@ -93,7 +93,7 @@ export function Timeline() {
   return (
     <section id="timeline" aria-labelledby="timeline-title" className="py-16 sm:py-24">
       <div className="mx-auto max-w-[76rem] px-4 sm:px-8">
-        <h2 id="timeline-title" className="rise font-display text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl">
+        <h2 id="timeline-title" className="rise title">
           Timeline
         </h2>
         <p className="rise mt-3 max-w-xl text-lg text-ink-2">
@@ -108,7 +108,7 @@ export function Timeline() {
           <ol className="flex flex-col">
             {groups.map((group) => (
               <li key={group.label} className="pb-12 md:grid md:grid-cols-[7rem_1fr] md:gap-x-20">
-                <h3 className="pb-5 pl-(--entry-x) font-display text-3xl font-extrabold tracking-[-0.02em] md:sticky md:top-24 md:self-start md:pb-0 md:pl-0 md:text-right">
+                <h3 className="pb-5 pl-(--entry-x) font-display text-3xl font-extrabold tracking-[-0.025em] md:sticky md:top-24 md:self-start md:pb-0 md:pl-0 md:text-right">
                   {group.label}
                 </h3>
                 <ul className="flex flex-col gap-8 pl-(--entry-x) md:pl-0">

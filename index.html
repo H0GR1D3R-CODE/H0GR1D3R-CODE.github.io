@@ -13,7 +13,35 @@
           document.querySelector('meta[name="theme-color"]').content = "#0B1622";
         }
       } catch (e) {}
+      // The loading screen shows once per visit, and never for reduced motion.
+      try {
+        if (sessionStorage.getItem("booted") === "1" || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("no-boot");
+        }
+      } catch (e) {}
     </script>
+    <style>
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: flex;
+        align-items: flex-end;
+        background: #0b1622;
+        color: #eef4f8;
+        font: 800 1.5rem/1.2 "Bricolage Grotesque Variable", "Segoe UI", system-ui, sans-serif;
+        letter-spacing: -0.02em;
+      }
+      #boot > span {
+        width: 100%;
+        max-width: 76rem;
+        margin: 0 auto;
+        padding: 0 1rem 11rem;
+      }
+      html.no-boot #boot {
+        display: none;
+      }
+    </style>
 
     <title>Nebin Stanly — software that actually runs</title>
     <meta
@@ -75,6 +103,7 @@
         <a href="mailto:nebinstanly12@gmail.com">nebinstanly12@gmail.com</a>.
       </p>
     </noscript>
+    <div id="boot" aria-hidden="true"><span>Nebin Stanly</span></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

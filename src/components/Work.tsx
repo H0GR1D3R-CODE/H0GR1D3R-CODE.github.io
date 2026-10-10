@@ -70,10 +70,10 @@ function Media({ media, name, priority = false }: { media: ProjectMedia; name: s
           type="button"
           onClick={() => setChoice(!playing)}
           aria-label={playing ? `Pause the ${name} recording` : `Play the ${name} recording`}
-          className="absolute bottom-3 right-3 inline-flex h-9 items-center gap-2 rounded-full bg-[#0b1622]/85 pl-3 pr-3.5 font-display text-sm font-bold text-[#eef4f8] backdrop-blur-sm hover:bg-[#0b1622]"
+          className="absolute bottom-3 right-3 inline-flex h-9 items-center gap-2 rounded-[0.6rem] bg-[#0b1622]/85 pl-3 pr-3.5 text-sm font-semibold text-[#eef4f8] backdrop-blur-sm hover:bg-[#0b1622]"
         >
           {playing ? <Pause width={14} height={14} /> : <Play width={14} height={14} />}
-          <span className="pt-[0.14em]">{playing ? "Pause" : "Play recording"}</span>
+          <span>{playing ? "Pause" : "Play recording"}</span>
         </button>
       )}
     </div>
@@ -82,8 +82,8 @@ function Media({ media, name, priority = false }: { media: ProjectMedia; name: s
 
 function Meta({ project, tag }: { project: Project; tag?: string }) {
   return (
-    <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-display text-sm font-bold text-ink-2">
-      {tag && <span className="rounded-md bg-straw px-2 pb-0.5 pt-1 leading-none text-on-straw">{tag}</span>}
+    <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm font-semibold text-ink-2">
+      {tag && <span className="rounded-md bg-straw px-2 py-1 leading-none text-on-straw">{tag}</span>}
       <span>{project.areas.join(" + ")}</span>
       <span aria-hidden="true">·</span>
       <span className="font-mono font-medium">{project.period}</span>
@@ -93,7 +93,7 @@ function Meta({ project, tag }: { project: Project; tag?: string }) {
 
 function Stack({ items }: { items: string[] }) {
   return (
-    <p className="flex flex-wrap gap-x-2 font-display text-sm font-semibold text-ink-2">
+    <p className="flex flex-wrap gap-x-2 text-sm font-medium text-ink-2">
       <span className="sr-only">Built with </span>
       {items.map((item, i) => (
         <span key={item}>
@@ -154,8 +154,8 @@ function Capstone({ project }: { project: Project }) {
       </div>
       <div className="rise mt-3 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
         <div>
-          <h3 className="font-display text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl">{project.name}</h3>
-          <p className="mt-2 font-display text-xl font-semibold text-ink-2">{project.tagline}</p>
+          <h3 className="font-display text-4xl font-extrabold tracking-[-0.025em] sm:text-5xl">{project.name}</h3>
+          <p className="mt-2 text-xl text-ink-2">{project.tagline}</p>
         </div>
         <Links project={project} />
       </div>
@@ -181,8 +181,8 @@ function Latest({ project }: { project: Project }) {
       <div className="slide-from-right flex flex-col gap-4 lg:col-span-5">
         <Meta project={project} tag="Latest" />
         <div>
-          <h3 className="font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-4xl">{project.name}</h3>
-          <p className="mt-1.5 font-display text-lg font-semibold text-ink-2">{project.tagline}</p>
+          <h3 className="font-display text-3xl font-extrabold tracking-[-0.025em] sm:text-4xl">{project.name}</h3>
+          <p className="mt-1.5 text-lg text-ink-2">{project.tagline}</p>
         </div>
         <p>{project.description}</p>
         {project.points && <Points items={project.points} />}
@@ -200,7 +200,7 @@ function Card({ project, column }: { project: Project; column: number }) {
       <Meta project={project} />
       <div>
         <h3 className="font-display text-2xl font-extrabold tracking-[-0.015em]">{project.name}</h3>
-        <p className="mt-1 font-display font-semibold text-ink-2">{project.tagline}</p>
+        <p className="mt-1 text-ink-2">{project.tagline}</p>
       </div>
       <p className="flex-1">{project.description}</p>
       <Stack items={project.stack} />
@@ -217,7 +217,7 @@ function Row({ project, i }: { project: Project; i: number }) {
     >
       <div>
         <h4 className="font-display text-lg font-extrabold">{project.name}</h4>
-        <p className="font-display text-sm font-bold text-ink-2">{project.areas.join(" + ")}</p>
+        <p className="text-sm font-semibold text-ink-2">{project.areas.join(" + ")}</p>
       </div>
       <div className="flex flex-col gap-2">
         <p>{project.description}</p>
@@ -262,7 +262,7 @@ export function Work() {
       <div className="mx-auto max-w-[76rem] px-4 sm:px-8">
         <div className="rise flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <div>
-            <h2 id="work-title" className="font-display text-4xl font-extrabold tracking-[-0.02em] sm:text-5xl">
+            <h2 id="work-title" className="title">
               Work
             </h2>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
@@ -282,12 +282,12 @@ export function Work() {
                   aria-pressed={active}
                   onClick={() => applyFilter(option)}
                   className={cn(
-                    "press inline-flex h-10 items-center gap-2 rounded-full border-[1.5px] px-4 font-display text-sm font-bold",
+                    "press inline-flex h-10 items-center gap-2 rounded-[0.6rem] border-[1.5px] px-3.5 text-sm font-semibold",
                     active ? "border-ink bg-ink text-bg" : "border-edge text-ink hover:border-ink hover:bg-bg-2"
                   )}
                 >
-                  <span className="pt-[0.14em]">{option}</span>
-                  <span className={cn("pt-[0.14em] font-mono text-xs font-medium", active ? "text-bg" : "text-ink-2")}>
+                  <span>{option}</span>
+                  <span className={cn("font-mono text-xs font-medium", active ? "text-bg" : "text-ink-2")}>
                     {count}
                   </span>
                 </button>

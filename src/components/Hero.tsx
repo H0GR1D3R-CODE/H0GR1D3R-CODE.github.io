@@ -1,48 +1,46 @@
-import type { CSSProperties } from "react";
-import { hero, projects } from "@/data/resume";
-import { ButtonLink } from "./Button";
-import { RouteMap } from "./RouteMap";
+import { useState, type CSSProperties } from "react";
+import { education, hero, projects } from "@/data/resume";
+import { liveProjects, useLiveStatus } from "@/lib/livePing";
+import { cn } from "@/lib/cn";
+import { LiveBoard } from "./LiveBoard";
 import { HeroBackdrop, HeroDrift } from "./Scenery";
-
-const liveDemos = projects.filter((p) => p.live);
-const MARKED = "actually runs.";
+import { Showcase, demos } from "./Showcase";
 
 /** One word of the headline, wrapped so it can rise out of its own clipped box. */
-function Word({ children, i }: { children: string; i: number }) {
+function Words({ text, from }: { text: string; from: number }) {
   return (
-    <span className="word" style={{ "--i": i } as CSSProperties}>
-      <span>{children}</span>
-    </span>
+    <>
+      {text.split(" ").map((word, i) => (
+        <span key={i}>
+          <span className="word" style={{ "--i": from + i } as CSSProperties}>
+            <span>{word}</span>
+          </span>{" "}
+        </span>
+      ))}
+    </>
   );
 }
 
-/** "…software that actually runs." The last two words get the marker stroke. */
-function Headline() {
-  const hasMark = hero.headline.endsWith(MARKED);
-  const lead = (hasMark ? hero.headline.slice(0, -MARKED.length) : hero.headline).trim().split(" ");
-  const marked = hasMark ? MARKED.split(" ") : [];
+const count = (text: string) => text.split(" ").length;
 
+/**
+ * A quiet lead-in, then the claim at full size with the part that matters
+ * in straw. Screen readers get it as the single sentence it is.
+ */
+function Headline() {
+  const { lead, statement, emphasis } = hero;
   return (
-    <h1
-      aria-label={hero.headline}
-      className="arrive font-display text-[clamp(2.5rem,1.4rem+3.1vw,3.75rem)] font-extrabold leading-[1.04] tracking-[-0.022em]"
-    >
+    <h1 aria-label={`${lead} ${statement} ${emphasis}`} className="font-display">
       <span aria-hidden="true">
-        {lead.map((w, i) => (
-          <span key={i}>
-            <Word i={i}>{w}</Word>{" "}
+        <span className="block text-[clamp(1.25rem,1rem+0.9vw,1.75rem)] font-medium leading-tight tracking-[-0.015em] text-ink-2">
+          <Words text={lead} from={0} />
+        </span>
+        <span className="mt-2 block text-[clamp(3.1rem,1.5rem+5.6vw,5.25rem)] font-extrabold leading-[0.96] tracking-[-0.024em]">
+          <Words text={statement} from={count(lead)} />
+          <span className="whitespace-nowrap text-straw-soft">
+            <Words text={emphasis} from={count(lead) + count(statement)} />
           </span>
-        ))}
-        {marked.length > 0 && (
-          <span className="marker whitespace-nowrap">
-            {marked.map((w, i) => (
-              <span key={i}>
-                <Word i={lead.length + i}>{w}</Word>
-                {i < marked.length - 1 && " "}
-              </span>
-            ))}
-          </span>
-        )}
+        </span>
       </span>
     </h1>
   );
@@ -50,42 +48,79 @@ function Headline() {
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
-export function Hero() {
+const facts = [
+  education[0].result,
+  `${projects.length} projects`,
+  `${liveProjects.length} live demos`,
+  `graduating ${education[0].end.replace(" (expected)", "")}`,
+];
+
+/**
+ * The hero is always the night scene, whichever theme the page is in. The
+ * left side makes the claim; the right side is the evidence: the live
+ * projects themselves, in a deck you can run from. `arrived` flips once the
+ * loading screen lifts, which starts the headline and deals the deck.
+ */
+export function Hero({ arrived }: { arrived: boolean }) {
+  const status = useLiveStatus(arrived);
+  const [active, setActive] = useState(demos[0].id);
+  /** The deck turns on its own until the visitor picks something. */
+  const [auto, setAuto] = useState(true);
+
+  const select = (id: string, byVisitor: boolean) => {
+    if (byVisitor) setAuto(false);
+    setActive(id);
+  };
+
   return (
     <section
       id="top"
+      data-theme="night"
       aria-label="Introduction"
-      className="sled-scene hero-scene relative -mt-16 overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pt-16"
+      className={cn(
+        "hero-scene relative isolate -mt-16 overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)] text-ink",
+        arrived && "arrived"
+      )}
     >
       <HeroBackdrop />
 
-      <div className="relative mx-auto grid max-w-[76rem] items-center gap-10 px-4 pb-32 pt-10 sm:px-8 sm:pb-36 sm:pt-12 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-2 lg:gap-12 lg:pt-6">
-        <div className="hero-sink">
+      <div className="relative mx-auto grid max-w-[76rem] gap-x-14 gap-y-10 px-4 pb-12 pt-24 sm:px-8 lg:min-h-svh lg:grid-cols-[minmax(0,33rem)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-8 lg:pb-10 lg:pt-24">
+        <div className="hero-sink lg:col-start-1 lg:row-start-2">
+          <p className="fade-up mb-6 inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm text-ink-2" style={delay(0)}>
+            <span className="size-2 rounded-full bg-straw" aria-hidden="true" />
+            <span className="font-semibold text-ink">{hero.status}</span>
+            <span aria-hidden="true" className="text-edge">/</span>
+            <span>{hero.where}</span>
+          </p>
+
           <Headline />
-          <p className="fade-up mt-6 max-w-[34rem] text-lg text-ink-2" style={delay(650)}>
+
+          <p className="fade-up mt-6 max-w-[33rem] text-lg text-ink-2" style={delay(520)}>
             {hero.intro}
           </p>
 
-          <div className="fade-up mt-8" style={delay(800)}>
-            <p className="font-display text-sm font-bold text-ink-2">Open a live demo</p>
-            <ul className="mt-3 flex flex-wrap gap-2.5">
-              {liveDemos.map((p, i) => (
-                <li key={p.id}>
-                  <ButtonLink href={p.live} external variant={i === 0 ? "primary" : "secondary"}>
-                    {p.name}
-                  </ButtonLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="fade-up mt-5 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem] text-ink-2" style={delay(620)}>
+            {facts.map((fact) => (
+              <li key={fact} className="flex items-center gap-2">
+                <span className="size-1 rounded-full bg-straw" aria-hidden="true" />
+                {fact}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="fade-up" style={delay(150)}>
-          <RouteMap />
+        <div className="hero-sink lg:col-start-2 lg:row-span-2 lg:row-start-2 lg:self-center [@media(max-height:820px)]:lg:self-start">
+          <Showcase active={active} auto={auto && arrived} onSelect={select} status={status} />
+        </div>
+
+        <div className="hero-sink lg:col-start-1 lg:row-start-3">
+          <div className="fade-up" style={delay(760)}>
+            <LiveBoard status={status} active={active} onPreview={(id) => select(id, true)} />
+          </div>
         </div>
       </div>
 
-      {/* A snow drift closes the scene; the work below sits on the snow. */}
+      {/* The night scene ends in a snow drift, and the page below sits on the snow. */}
       <HeroDrift />
     </section>
   );

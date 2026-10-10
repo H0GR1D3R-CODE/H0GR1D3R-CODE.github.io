@@ -1,8 +1,8 @@
 # Nebin Stanly — Portfolio
 
-A single-page portfolio: Vite, React 19, TypeScript and Tailwind v4, with no animation or 3D libraries. Live at [h0gr1d3r-code.github.io](https://h0gr1d3r-code.github.io/).
+A single-page portfolio: Vite, React 19, TypeScript and Tailwind v4. Live at [h0gr1d3r-code.github.io](https://h0gr1d3r-code.github.io/).
 
-The look comes from the GitHub profile: a panda in a straw hat in the snow. It opens as a "snow day" and the toggle switches to a "snowy night".
+The look comes from the GitHub profile: a panda in a straw hat in the snow. The page opens as a "snow day" and the toggle switches to a "snowy night"; the hero is always the night scene.
 
 ## Develop
 
@@ -25,18 +25,25 @@ When the résumé changes, update `resume.ts` and replace `public/Nebin-Stanly-C
 
 Screenshots and recordings are in `public/shots/`. A recording is an animated WebP plus a `-poster.webp` first frame; only the poster loads with the page.
 
-## The map in the hero
+### Adding a live project
 
-The hero is a small cut of [Corridor](https://github.com/H0GR1D3R-CODE/corridor-routing-atlas): a schematic of 18 places and 30 roads in Bengaluru. Pick a place and A* draws the fastest route from Yeshwanthpur; pick a road and it gets snowed in, so the route goes around it.
+A project with a `live` URL and a `media` entry appears in the hero's deck automatically. Two optional fields control how:
 
-- [`src/lib/route.ts`](src/lib/route.ts) holds the places, the roads, the travel-time model and both searches (A* and Dijkstra, which the readout compares).
-- [`src/components/RouteMap.tsx`](src/components/RouteMap.tsx) draws it and handles pointer, touch and keyboard input.
+- `ping`: a small static file on the live host (an icon or stylesheet). The page fetches it to show the demo is up and how fast it answered. Browsers refuse to let one site fetch another site's HTML, so this must not be the page itself.
+- `runsInPage`: set to `true` only if the site allows being embedded (no `X-Frame-Options: DENY` and no restrictive `frame-ancestors`). The deck then offers "Run it right here". EcoTrack refuses embedding on purpose, so it plays its recording instead.
 
-Positions are approximate and travel times are modelled, not measured.
+## The hero
+
+- [`Loader.tsx`](src/components/Loader.tsx): the loading screen pings every live demo and lists each one as it answers. It shows once per visit and never for reduced motion. `index.html` carries a static copy so it paints before any script runs.
+- [`Showcase.tsx`](src/components/Showcase.tsx): the deck of project windows. The front one can run the real site inside the page.
+- [`LiveBoard.tsx`](src/components/LiveBoard.tsx): the list of live demos with their reply times. Hovering a row brings its window forward.
+- [`livePing.ts`](src/lib/livePing.ts): the one-per-page-load ping they all share.
 
 ## Motion
 
-Scroll-linked motion uses CSS scroll-driven animations (`animation-timeline`), so it is tied to scroll position rather than time and needs no script. Browsers without support show the same content in place. Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css): with reduced motion the page is complete and still, recordings wait for a Play button, and the map still works.
+Scroll-linked motion uses CSS scroll-driven animations (`animation-timeline`), so it is tied to scroll position rather than time. Browsers without support show the same content in place. Wheel scrolling is eased with [Lenis](https://github.com/darkroomengineering/lenis); touch devices keep their native momentum.
+
+Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css). With reduced motion there is no loading screen, the page is complete and still, the deck waits to be clicked, and recordings wait for a Play button.
 
 ## Build
 

@@ -30,10 +30,15 @@ export const nav = [
   { id: "contact", label: "Contact" },
 ] as const;
 
+/** The headline is one sentence, set in three voices: a quiet lead-in, the claim, and the part that matters. */
 export const hero = {
-  headline: "Nebin Stanly builds software that actually runs.",
+  status: "Open to technical roles",
+  where: "Bengaluru, India",
+  lead: "Nebin Stanly builds",
+  statement: "software that",
+  emphasis: "actually runs.",
   intro:
-    "BCA (Hons.) student at CHRIST University, Bengaluru, working across full-stack web, machine learning and IoT. Every project here is deployed or runnable, and most are one click from a live demo.",
+    "BCA (Hons.) student at CHRIST University, working across full-stack web, machine learning and IoT. Every project here is deployed or runnable, and some of them will run right here on this page.",
 } as const;
 
 /** The résumé's professional summary, kept verbatim for metadata and print. */
@@ -74,6 +79,14 @@ export type Project = {
   stack: string[];
   areas: Area[];
   live?: string;
+  /**
+   * A small static file on the live host. Fetching it is how the page checks
+   * the demo is up: browsers refuse to let one site fetch another site's
+   * HTML, but an icon or stylesheet is allowed.
+   */
+  ping?: string;
+  /** True when the live site allows itself to be embedded, so the hero can run it in place. */
+  runsInPage?: boolean;
   code: string;
   extra?: { label: string; href: string };
   media?: ProjectMedia;
@@ -99,6 +112,7 @@ export const projects: Project[] = [
     stack: ["React", "Vite", "Flask", "Firebase Firestore", "Firebase Auth", "Chart.js"],
     areas: ["Web"],
     live: "https://ecotrk.web.app/",
+    ping: "https://ecotrk.web.app/icons/icon-32.webp",
     code: gh("EcoTracker"),
     extra: { label: "Try the 30-second estimator", href: "https://ecotrk.web.app/estimate" },
     media: {
@@ -116,7 +130,7 @@ export const projects: Project[] = [
     tier: "latest",
     period: "Oct 2026",
     description:
-      "Finds the fastest route for an ambulance when every road's travel time depends on the day, the hour, the weather and what is happening in the city. The map at the top of this page is a small cut of it.",
+      "Finds the fastest route for an ambulance when every road's travel time depends on the day, the hour, the weather and what is happening in the city.",
     points: [
       "Routes over a graph of 832 junctions and 1,630 road segments, with 15 hospitals.",
       "Races five shortest-path algorithms on the same trip: Dijkstra, A*, Bidirectional Dijkstra, Bellman–Ford and Greedy best-first.",
@@ -125,6 +139,8 @@ export const projects: Project[] = [
     stack: ["JavaScript", "Graph algorithms", "Canvas", "No build step, no dependencies"],
     areas: ["Web"],
     live: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/",
+    ping: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/css/style.css",
+    runsInPage: true,
     code: gh("corridor-routing-atlas"),
     extra: { label: "Watch the 5-minute film", href: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/film/" },
     media: {
@@ -164,6 +180,8 @@ export const projects: Project[] = [
     stack: ["React", "Vite", "Tailwind CSS"],
     areas: ["Web"],
     live: "https://fitadapt-ai.vercel.app/",
+    ping: "https://fitadapt-ai.vercel.app/favicon.svg",
+    runsInPage: true,
     code: gh("fitadapt-ai"),
     media: {
       still: "/shots/fitadapt.webp",
@@ -183,6 +201,8 @@ export const projects: Project[] = [
     stack: ["Python", "scikit-learn", "NLTK", "Flask"],
     areas: ["ML"],
     live: "https://fake-news-detection-nlp.vercel.app/",
+    ping: "https://fake-news-detection-nlp.vercel.app/static/css/app.css",
+    runsInPage: true,
     code: gh("fake-news-detection-nlp"),
     media: {
       still: "/shots/veritas.webp",
@@ -202,6 +222,8 @@ export const projects: Project[] = [
     stack: ["React", "Vite", "GitHub Pages"],
     areas: ["Web"],
     live: "https://h0gr1d3r-code.github.io/hogrider/?deck=hog-rider,musketeer,ice-golem,ice-spirit,skeletons,cannon,fireball,the-log",
+    ping: "https://h0gr1d3r-code.github.io/hogrider/favicon.svg",
+    runsInPage: true,
     code: gh("hogrider"),
     media: {
       still: "/shots/hogrider.webp",

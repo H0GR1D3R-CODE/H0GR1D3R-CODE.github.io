@@ -17,7 +17,7 @@ export function Header({ theme, onToggleTheme }: HeaderProps) {
       <div className="mx-auto flex h-16 max-w-[76rem] items-center gap-2 px-4 sm:gap-6 sm:px-8">
         <a href="#top" className="flex h-10 shrink-0 items-center gap-2.5 rounded-lg" aria-label={`${profile.name}, back to top`}>
           <PandaMark className="h-8 w-auto" />
-          <span className="hidden pt-[0.14em] font-display text-[1.0625rem] font-extrabold tracking-tight min-[560px]:inline">
+          <span className="hidden font-display text-lg font-extrabold tracking-[-0.015em] min-[560px]:inline">
             {profile.name}
           </span>
         </a>
@@ -28,7 +28,7 @@ export function Header({ theme, onToggleTheme }: HeaderProps) {
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
-                  className="inline-flex h-10 items-center rounded-full px-2 font-display text-[0.875rem] font-bold text-ink-2 hover:bg-bg-2 hover:text-ink min-[400px]:px-2.5 sm:px-3.5 sm:text-[0.9375rem]"
+                  className="inline-flex h-10 items-center rounded-[0.6rem] px-2 text-[0.875rem] font-semibold text-ink-2 hover:bg-bg-2 hover:text-ink min-[400px]:px-2.5 sm:px-3.5 sm:text-[0.9375rem]"
                 >
                   {item.label}
                 </a>
@@ -45,7 +45,7 @@ export function Header({ theme, onToggleTheme }: HeaderProps) {
           }}
           aria-label={night ? "Switch to snow day theme" : "Switch to snowy night theme"}
           title={night ? "Snow day" : "Snowy night"}
-          className="press flex size-10 shrink-0 items-center justify-center rounded-full border-[1.5px] border-edge text-ink hover:border-ink hover:bg-bg-2"
+          className="press flex size-10 shrink-0 items-center justify-center rounded-[0.6rem] border-[1.5px] border-edge text-ink hover:border-ink hover:bg-bg-2"
         >
           {night ? <SnowDay width={18} height={18} /> : <SnowNight width={18} height={18} />}
         </button>
