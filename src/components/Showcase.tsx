@@ -52,7 +52,8 @@ function Card({ project, pos, status, running, onRun, onStop }: CardProps) {
     if (!front) setTour(false);
   }, [front]);
 
-  const narrow = size.w > 0 && size.w < 520;
+  // Phone-sized windows get the site's phone layout; anything wider gets the desktop one, scaled down.
+  const narrow = size.w > 0 && size.w < 420;
   const layoutWidth = narrow ? 420 : 1280;
   const scale = size.w > 0 ? size.w / layoutWidth : 1;
 
