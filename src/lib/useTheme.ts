@@ -3,7 +3,8 @@ import { flushSync } from "react-dom";
 
 export type Theme = "day" | "night";
 
-const STORAGE_KEY = "theme";
+/** Only ever written when the visitor presses the toggle. */
+const STORAGE_KEY = "theme-choice";
 const THEME_COLOR: Record<Theme, string> = { day: "#F6FAFC", night: "#0B1622" };
 
 function current(): Theme {
@@ -18,21 +19,14 @@ function apply(theme: Theme) {
 }
 
 /**
- * Snow day is the default for everyone; snowy night is opt-in and remembered.
+ * Snowy night is the default for everyone; snow day is opt-in and remembered.
  * index.html applies a saved choice before first paint, so this hook only
  * has to read it back and keep the document in sync.
  */
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(current);
 
-  useEffect(() => {
-    apply(theme);
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      // Private mode or blocked storage: the choice just won't persist.
-    }
-  }, [theme]);
+  useEffect(() => apply(theme), [theme]);
 
   /**
    * Flips the theme. Where the browser can, the new theme opens in a circle
@@ -40,6 +34,11 @@ export function useTheme() {
    */
   const toggle = useCallback((origin?: { x: number; y: number }) => {
     const next: Theme = current() === "day" ? "night" : "day";
+    try {
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      // Private mode or blocked storage: the choice just won't persist.
+    }
     const root = document.documentElement;
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

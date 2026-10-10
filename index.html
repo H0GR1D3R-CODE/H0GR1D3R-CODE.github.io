@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="night">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#F6FAFC" />
+    <meta name="theme-color" content="#0B1622" />
 
-    <!-- Apply a saved "snowy night" choice before first paint, so the page never flashes the wrong theme. -->
+    <!-- The page opens in snowy night. A saved "snow day" choice is applied before first paint, so it never flashes the wrong theme. -->
     <script>
       try {
-        if (localStorage.getItem("theme") === "night") {
-          document.documentElement.dataset.theme = "night";
-          document.querySelector('meta[name="theme-color"]').content = "#0B1622";
+        if (localStorage.getItem("theme-choice") === "day") {
+          delete document.documentElement.dataset.theme;
+          document.querySelector('meta[name="theme-color"]').content = "#F6FAFC";
         }
       } catch (e) {}
       // The opening screen shows on every load, except for reduced motion.

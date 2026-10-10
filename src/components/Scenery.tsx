@@ -1,6 +1,6 @@
-// Landscape between and behind sections. Each scene owns a scroll timeline
-// (see `.sled-scene` in globals.css): the sled rides its hill for exactly as
-// long as the scene is on screen, forwards as the page goes down and
+// The landscape behind the hero and the drift that closes it. The hero owns
+// a scroll timeline (see `.hero-scene` in globals.css): the sled rides the
+// drift as the hero scrolls away, forwards as the page goes down and
 // backwards as it comes back up. It is all decoration, hidden from
 // assistive technology, and it stands still for reduced motion.
 

@@ -2,7 +2,7 @@
 
 A single-page portfolio: Vite, React 19, TypeScript and Tailwind v4. Live at [h0gr1d3r-code.github.io](https://h0gr1d3r-code.github.io/).
 
-The look comes from the GitHub profile: a panda in a straw hat in the snow. The page opens as a "snow day" and the toggle switches to a "snowy night"; the hero is always the night scene.
+The look comes from the GitHub profile: a panda in a straw hat in the snow. The page opens as a "snowy night" and the toggle switches to a "snow day"; the hero is always the night scene.
 
 ## Develop
 

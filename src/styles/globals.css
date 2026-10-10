@@ -5,8 +5,9 @@
 
 /* ─────────────────────────────────────────────────────────────────────────
    Two themes, one world: a panda in a straw hat in the snow.
-   "Snow day" is the default. "Snowy night" is the same scene after dark,
-   using the palette of the GitHub profile README banner. The hero is always
+   "Snowy night" is the default, using the palette of the GitHub profile
+   README banner (index.html sets data-theme="night"). "Snow day" is the same
+   scene in daylight, and is what the bare :root below describes. The hero is always
    the night scene, whichever theme the rest of the page is in.
    Straw is the only warm colour in either theme.
    ───────────────────────────────────────────────────────────────────────── */
@@ -977,10 +978,6 @@ html.no-boot #boot {
 }
 
 /* ── Scenery ────────────────────────────────────────────────────────────── */
-.sled-scene {
-  view-timeline-name: --scene;
-  view-timeline-axis: block;
-}
 .hero-scene {
   view-timeline-name: --scene, --hero;
   view-timeline-axis: block;
@@ -1449,8 +1446,7 @@ html.no-boot #boot {
   header,
   #sled,
   .loader,
-  #boot,
-  .no-print {
+  #boot {
     display: none !important;
   }
   body {

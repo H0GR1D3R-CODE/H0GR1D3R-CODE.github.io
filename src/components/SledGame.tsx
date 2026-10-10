@@ -281,11 +281,17 @@ export function SledGame() {
           {project ? (
             <Found project={project} />
           ) : (
-            <p className="flex min-h-[8rem] flex-wrap items-center gap-x-2 gap-y-1 text-lg text-ink-2">
-              Nothing found yet. Press
-              <kbd className="rounded-md border-[1.5px] border-edge px-2 py-0.5 font-mono text-sm font-bold text-ink">→</kbd>
-              or tap the first flag to set off.
-            </p>
+            <div className="flex min-h-[8rem] items-center">
+              <p className="text-lg text-ink-2">
+                Nothing found yet.{" "}
+                <span className="hidden [@media(pointer:fine)]:inline">
+                  Press{" "}
+                  <kbd className="rounded-md border-[1.5px] border-edge px-2 py-0.5 font-mono text-sm font-bold text-ink">→</kbd>{" "}
+                  or pick the first flag to set off.
+                </span>
+                <span className="[@media(pointer:fine)]:hidden">Tap the first flag to set off.</span>
+              </p>
+            </div>
           )}
         </div>
       </div>
