@@ -11,6 +11,17 @@ export const demos = liveProjects.filter((p) => p.media);
 /** How long each window stays in front while the deck is turning on its own. */
 const TURN_MS = 5600;
 
+/** What an embedded site from somewhere else is allowed to do. */
+const SANDBOX = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
+
+/**
+ * True for a project hosted on this site's own domain (Corridor and hogrider
+ * live beside the portfolio on GitHub Pages). A sandbox cannot contain a page
+ * from the same origin that is allowed scripts, and the browser warns about
+ * the attempt, so those are embedded plainly. They are the same author's code.
+ */
+const sameSite = (url: string) => new URL(url).origin === window.location.origin;
+
 const address = (url: string) => {
   const u = new URL(url);
   return (u.host + u.pathname).replace(/\/$/, "");
@@ -120,7 +131,7 @@ function Card({ project, pos, status, running, onRun, onStop }: CardProps) {
                 src={project.live}
                 title={`${project.name}, running live`}
                 onLoad={() => setLoaded(true)}
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                sandbox={sameSite(project.live!) ? undefined : SANDBOX}
                 referrerPolicy="no-referrer"
                 className={cn("absolute left-0 top-0 origin-top-left border-0 bg-white", !loaded && "opacity-0")}
                 style={{ width: layoutWidth, height: size.h / scale, transform: `scale(${scale})` }}
