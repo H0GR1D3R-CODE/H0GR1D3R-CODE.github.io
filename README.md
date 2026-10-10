@@ -34,10 +34,10 @@ A project with a `live` URL and a `media` entry appears in the hero's deck autom
 
 ## The hero
 
-- [`Loader.tsx`](src/components/Loader.tsx): the loading screen pings every live demo and lists each one as it answers. It shows once per visit and never for reduced motion. `index.html` carries a static copy so it paints before any script runs.
+- [`Loader.tsx`](src/components/Loader.tsx): the opening screen. The mark draws itself as a route, the name rises in, and the screen opens outwards from the mark's destination dot. It plays on every load, and every load starts at the top of the page; it is skipped for reduced motion. `index.html` carries a plain navy panel so nothing flashes before it mounts.
 - [`Showcase.tsx`](src/components/Showcase.tsx): the deck of project windows. The front one can run the real site inside the page.
 - [`Hero.tsx`](src/components/Hero.tsx): on a wide screen the hero is pinned. It stays put while the page scrolls through one step per live project, and each step brings the next project to the front of the deck. On phones, short screens and with reduced motion it is not pinned and the deck turns on its own.
-- [`HeroRun.tsx`](src/components/HeroRun.tsx): the little downhill under the headline, one flag per live project. Scrolling sleds the panda down it; clicking a flag jumps to that project.
+- [`HeroCatch.tsx`](src/components/HeroCatch.tsx): the hero's mini game. Project names drift down one at a time; move the panda (mouse, finger or arrow keys) so one lands on its hat and that project comes to the front of the deck. It is an extra on top of the deck's own tabs, so it is not shown with reduced motion.
 - [`livePing.ts`](src/lib/livePing.ts): the one-per-page-load ping they all share.
 
 ## The rest of the page
@@ -52,7 +52,7 @@ A project with a `live` URL and a `media` entry appears in the hero's deck autom
 
 Scroll-linked motion uses CSS scroll-driven animations (`animation-timeline`), so it is tied to scroll position rather than time. Browsers without support show the same content in place. Wheel scrolling is eased with [Lenis](https://github.com/darkroomengineering/lenis); touch devices keep their native momentum.
 
-Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css). With reduced motion there is no loading screen, the page is complete and still, the deck waits to be clicked, recordings wait for a Play button, the timeline is drawn with every flag up and no sled, and the game places the sled instead of sliding it.
+Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css). With reduced motion there is no opening screen, the page is complete and still, the deck waits to be clicked, recordings wait for a Play button, the timeline is drawn with every flag up and no sled, and the game places the sled instead of sliding it.
 
 ## Build
 

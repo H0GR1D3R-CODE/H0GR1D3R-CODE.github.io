@@ -13,11 +13,16 @@
           document.querySelector('meta[name="theme-color"]').content = "#0B1622";
         }
       } catch (e) {}
-      // The loading screen shows once per visit, and never for reduced motion.
+      // The opening screen shows on every load, except for reduced motion.
       try {
-        if (sessionStorage.getItem("booted") === "1" || matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          document.documentElement.classList.add("no-boot");
-        }
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("no-boot");
+      } catch (e) {}
+      // Every load starts at the top. A refresh also drops a section link left in the address by the menu;
+      // a link opened fresh from elsewhere (…/#work) is still honoured once the page is up.
+      try {
+        history.scrollRestoration = "manual";
+        var nav = performance.getEntriesByType("navigation")[0];
+        if (nav && nav.type === "reload" && location.hash) history.replaceState(null, "", location.pathname + location.search);
       } catch (e) {}
     </script>
     <style>
@@ -25,18 +30,7 @@
         position: fixed;
         inset: 0;
         z-index: 200;
-        display: flex;
-        align-items: flex-end;
         background: #0b1622;
-        color: #eef4f8;
-        font: 800 1.5rem/1.2 "Bricolage Grotesque Variable", "Segoe UI", system-ui, sans-serif;
-        letter-spacing: -0.02em;
-      }
-      #boot > span {
-        width: 100%;
-        max-width: 76rem;
-        margin: 0 auto;
-        padding: 0 1rem 11rem;
       }
       html.no-boot #boot {
         display: none;
@@ -103,7 +97,7 @@
         <a href="mailto:nebinstanly12@gmail.com">nebinstanly12@gmail.com</a>.
       </p>
     </noscript>
-    <div id="boot" aria-hidden="true"><span>Nebin Stanly</span></div>
+    <div id="boot" aria-hidden="true"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

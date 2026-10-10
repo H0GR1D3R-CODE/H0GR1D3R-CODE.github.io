@@ -292,7 +292,8 @@ export function Showcase({ active, auto, onSelect, status }: ShowcaseProps) {
         </div>
       </div>
 
-      <div role="tablist" aria-label="Live projects" className="relative z-10 mt-5 flex flex-wrap gap-1.5">
+      {/* The tabs are the windows themselves in miniature: the one in front is lit and raised. */}
+      <div role="tablist" aria-label="Live projects" className="deck-tabs relative z-10 mt-5">
         {demos.map((p) => {
           const selected = p.id === active;
           return (
@@ -309,12 +310,10 @@ export function Showcase({ active, auto, onSelect, status }: ShowcaseProps) {
               tabIndex={selected ? 0 : -1}
               onClick={() => onSelect(p.id, true)}
               onKeyDown={onTabKey}
-              className={cn(
-                "relative inline-flex h-10 items-center overflow-hidden rounded-[0.6rem] border-[1.5px] px-3.5 text-sm font-semibold",
-                selected ? "border-ink bg-ink text-bg" : "border-edge bg-bg/40 text-ink hover:border-ink hover:bg-bg-2"
-              )}
+              className="deck-tab"
             >
-              {p.name}
+              <img src={p.media!.still} alt="" loading="lazy" decoding="async" />
+              <span className="deck-tab-name">{p.name}</span>
               {selected && turning && (
                 <span
                   key={p.id}

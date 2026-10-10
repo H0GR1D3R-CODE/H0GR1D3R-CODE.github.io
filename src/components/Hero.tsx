@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { education, hero, projects } from "@/data/resume";
 import { liveProjects, useLiveStatus } from "@/lib/livePing";
 import { cn } from "@/lib/cn";
-import { HeroRun, pinProgress } from "./HeroRun";
+import { HeroCatch } from "./HeroCatch";
 import { HeroBackdrop, HeroDrift } from "./Scenery";
 import { Showcase, demos } from "./Showcase";
 
@@ -54,6 +54,17 @@ const facts = [
   `${liveProjects.length} live demos`,
   `graduating ${education[0].end.replace(" (expected)", "")}`,
 ];
+
+/**
+ * How far the page has scrolled through the pinned hero, from 0 to 1. The
+ * hero is taller than the screen while pinned; this is the share of that
+ * extra height already used up.
+ */
+function pinProgress(section: HTMLElement): number {
+  const box = section.getBoundingClientRect();
+  const travel = box.height - window.innerHeight;
+  return travel > 0 ? Math.min(Math.max(-box.top / travel, 0), 1) : 0;
+}
 
 /** Must match the media query on `.hero-pin` in globals.css. */
 const PIN_QUERY = "(min-width: 64rem) and (min-height: 680px) and (prefers-reduced-motion: no-preference)";
@@ -139,9 +150,9 @@ export function Hero({ arrived }: { arrived: boolean }) {
       <div className="hero-stage relative overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)]">
         <HeroBackdrop />
 
-        <div className="hero-grid relative mx-auto grid max-w-[76rem] gap-x-14 gap-y-9 px-4 pb-10 pt-24 sm:px-8 lg:grid-cols-[minmax(0,33rem)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-7 lg:pb-6">
+        <div className="hero-grid relative mx-auto grid max-w-[76rem] gap-x-14 gap-y-9 px-4 pb-10 pt-24 sm:px-8 lg:grid-cols-[minmax(0,33rem)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-5 lg:pb-5 lg:pt-[5.5rem]">
           <div className="hero-sink lg:col-start-1 lg:row-start-2">
-            <p className="fade-up mb-5 inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm text-ink-2" style={delay(0)}>
+            <p className="fade-up mb-4 inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm text-ink-2" style={delay(0)}>
               <span className="size-2 rounded-full bg-straw" aria-hidden="true" />
               <span className="font-semibold text-ink">{hero.status}</span>
               <span aria-hidden="true" className="text-edge">/</span>
@@ -150,11 +161,11 @@ export function Hero({ arrived }: { arrived: boolean }) {
 
             <Headline />
 
-            <p className="hero-intro fade-up mt-5 max-w-[33rem] text-lg text-ink-2" style={delay(520)}>
+            <p className="hero-intro fade-up mt-4 max-w-[33rem] text-lg text-ink-2" style={delay(520)}>
               {hero.intro}
             </p>
 
-            <ul className="fade-up mt-4 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem] text-ink-2" style={delay(620)}>
+            <ul className="hero-facts fade-up mt-4 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem] text-ink-2" style={delay(620)}>
               {facts.map((fact) => (
                 <li key={fact} className="flex items-center gap-2">
                   <span className="size-1 rounded-full bg-straw" aria-hidden="true" />
@@ -170,7 +181,7 @@ export function Hero({ arrived }: { arrived: boolean }) {
 
           <div className="hero-sink lg:col-start-1 lg:row-start-3">
             <div className="fade-up" style={delay(760)}>
-              <HeroRun active={active} pinned={pinned} onSelect={(id) => select(id, true)} />
+              <HeroCatch pinned={pinned} onSelect={(id) => select(id, true)} />
             </div>
           </div>
         </div>

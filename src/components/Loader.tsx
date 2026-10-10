@@ -1,47 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
-import { liveProjects, ping, statusText, type LiveStatus } from "@/lib/livePing";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { profile } from "@/data/resume";
 import { cn } from "@/lib/cn";
-import { Mark } from "./Logo";
 
-const SESSION_KEY = "booted";
-/** The screen stays at least this long, so it can be read rather than flashed. */
-const MIN_MS = 1300;
-/** Demos that haven't answered by now are left to finish in the hero. */
-const PATIENCE_MS = 1700;
-const HOLD_MS = 380;
-const LIFT_MS = 850;
+/** Long enough for the mark to finish drawing and the name to settle. */
+const SHOW_MS = 1750;
+/** A slow font never holds the page for longer than this. */
+const FONT_PATIENCE_MS = 1800;
+const OPEN_MS = 800;
 
-function shouldSkip() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
+const shouldSkip = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 
 /**
- * The loading screen. It does the page's first real job in public: it pings
- * every live demo from the visitor's browser and lists each one as it
- * answers, so the headline's claim is already half-proved by the time it
- * lifts. It shows once per visit and is skipped for reduced motion.
- * index.html carries a static copy of the same panel so it is on screen
- * before any script has run.
+ * The opening screen. The mark draws itself as a route, from its start to
+ * its straw destination, and the name rises in under it. Then the screen
+ * opens outwards from that destination dot, so the page is revealed from
+ * the point the route arrived at. It plays on every load, refreshes
+ * included, and is skipped for reduced motion. index.html carries a plain
+ * navy panel so there is no flash of the page before this mounts.
  */
 export function Loader({ onLift }: { onLift: () => void }) {
   const skip = useMemo(shouldSkip, []);
-  const [fontsReady, setFontsReady] = useState(false);
-  const [replies, setReplies] = useState<Record<string, LiveStatus>>({});
-  const [waitedEnough, setWaitedEnough] = useState(false);
-  const [outOfPatience, setOutOfPatience] = useState(false);
-  const [lifting, setLifting] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<SVGCircleElement>(null);
+  const [opening, setOpening] = useState(false);
   const [gone, setGone] = useState(skip);
-
-  const answered = Object.keys(replies).length;
-  const total = liveProjects.length + 1;
-  const done = (fontsReady ? 1 : 0) + answered;
-  const ready = fontsReady && waitedEnough && (answered === liveProjects.length || outOfPatience);
 
   useEffect(() => {
     // The static panel from index.html has done its job once React is drawing.
@@ -52,88 +36,61 @@ export function Loader({ onLift }: { onLift: () => void }) {
     }
     document.documentElement.classList.add("booting");
     let current = true;
-
-    const fonts = () => current && setFontsReady(true);
-    // Never let a slow font hold the page hostage.
-    const fontTimer = window.setTimeout(fonts, 1800);
-    (document.fonts?.ready ?? Promise.resolve()).then(fonts);
-
-    for (const p of liveProjects) {
-      ping(p).then((s) => current && setReplies((all) => ({ ...all, [p.id]: s })));
-    }
-    const minTimer = window.setTimeout(() => current && setWaitedEnough(true), MIN_MS);
-    const patienceTimer = window.setTimeout(() => current && setOutOfPatience(true), PATIENCE_MS);
-
+    const fonts = Promise.race([document.fonts?.ready ?? Promise.resolve(), wait(FONT_PATIENCE_MS)]);
+    Promise.all([fonts, wait(SHOW_MS)]).then(() => {
+      if (!current) return;
+      // Open from wherever the destination dot ended up on this screen.
+      const dot = endRef.current?.getBoundingClientRect();
+      if (dot && rootRef.current) {
+        rootRef.current.style.setProperty("--iris-x", `${dot.left + dot.width / 2}px`);
+        rootRef.current.style.setProperty("--iris-y", `${dot.top + dot.height / 2}px`);
+      }
+      setOpening(true);
+      onLift();
+      document.documentElement.classList.remove("booting");
+    });
     return () => {
       current = false;
-      window.clearTimeout(fontTimer);
-      window.clearTimeout(minTimer);
-      window.clearTimeout(patienceTimer);
       document.documentElement.classList.remove("booting");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (skip || !ready || lifting) return;
-    const id = window.setTimeout(() => {
-      setLifting(true);
-      onLift();
-      document.documentElement.classList.remove("booting");
-      try {
-        sessionStorage.setItem(SESSION_KEY, "1");
-      } catch {
-        // No storage: the screen will simply show again next time.
-      }
-    }, HOLD_MS);
+    if (!opening) return;
+    const id = window.setTimeout(() => setGone(true), OPEN_MS);
     return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skip, ready, lifting]);
-
-  useEffect(() => {
-    if (!lifting) return;
-    const id = window.setTimeout(() => setGone(true), LIFT_MS);
-    return () => window.clearTimeout(id);
-  }, [lifting]);
+  }, [opening]);
 
   if (gone) return null;
 
-  const lines = [
-    { key: "fonts", label: "Typefaces", detail: fontsReady ? "loaded" : "loading", done: fontsReady },
-    ...liveProjects.map((p) => ({
-      key: p.id,
-      label: p.name,
-      detail: statusText(replies[p.id]),
-      done: replies[p.id]?.state === "up",
-    })),
-  ];
-
   return (
-    <div className={cn("loader", lifting && "loader-lift")} role="status" aria-live="polite" data-theme="night">
-      <div className="loader-inner">
-        <p className="flex items-center gap-3 font-display text-2xl font-extrabold tracking-[-0.02em] sm:text-3xl">
-          <Mark className="size-8" />
-          {profile.name}
-        </p>
-        <p className="mt-2 text-ink-2">Checking each live project from your browser.</p>
+    <div
+      ref={rootRef}
+      className={cn("loader", opening && "loader-open")}
+      role="status"
+      aria-label={`Loading ${profile.name}'s portfolio`}
+      data-theme="night"
+    >
+      <div className="loader-field" aria-hidden="true" />
 
-        <ol className="mt-6 flex flex-col gap-2 font-mono text-[0.8125rem] sm:text-sm">
-          {lines.map((line) => (
-            <li key={line.key} className={cn("loader-step flex items-center gap-3", line.done && "is-done")}>
-              <svg viewBox="0 0 16 16" width="16" height="16" className="shrink-0" aria-hidden="true">
-                <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1.5" />
-                {line.done && (
-                  <path d="M4.6 8.3 7 10.6 11.4 5.8" fill="none" stroke="var(--straw)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                )}
-              </svg>
-              <span className="w-28 font-bold text-ink sm:w-32">{line.label}</span>
-              <span className="text-ink-2">{line.detail}</span>
-            </li>
+      <div className="loader-core" aria-hidden="true">
+        <svg viewBox="0 0 32 32" className="loader-mark" focusable="false">
+          <path className="loader-route" d="M8 24V8l16 16V8" pathLength={1} />
+          <circle className="loader-node" cx="8" cy="24" r="3.6" style={{ "--at": "0.05s" } as CSSProperties} />
+          <circle className="loader-ring" cx="24" cy="8" r="4.4" />
+          <circle ref={endRef} className="loader-node loader-end" cx="24" cy="8" r="4.4" style={{ "--at": "1s" } as CSSProperties} />
+        </svg>
+
+        <p className="loader-name font-display">
+          {[...profile.name].map((letter, i) => (
+            <span key={i} className="loader-letter" style={{ "--i": i } as CSSProperties}>
+              <span>{letter === " " ? " " : letter}</span>
+            </span>
           ))}
-        </ol>
+        </p>
+        <p className="loader-sub">Portfolio</p>
       </div>
-
-      <div className="loader-bar" style={{ transform: `scaleX(${done / total})` }} aria-hidden="true" />
     </div>
   );
 }
