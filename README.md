@@ -36,7 +36,8 @@ A project with a `live` URL and a `media` entry appears in the hero's deck autom
 
 - [`Loader.tsx`](src/components/Loader.tsx): the loading screen pings every live demo and lists each one as it answers. It shows once per visit and never for reduced motion. `index.html` carries a static copy so it paints before any script runs.
 - [`Showcase.tsx`](src/components/Showcase.tsx): the deck of project windows. The front one can run the real site inside the page.
-- [`LiveBoard.tsx`](src/components/LiveBoard.tsx): the list of live demos with their reply times. Hovering a row brings its window forward.
+- [`Hero.tsx`](src/components/Hero.tsx): on a wide screen the hero is pinned. It stays put while the page scrolls through one step per live project, and each step brings the next project to the front of the deck. On phones, short screens and with reduced motion it is not pinned and the deck turns on its own.
+- [`HeroRun.tsx`](src/components/HeroRun.tsx): the little downhill under the headline, one flag per live project. Scrolling sleds the panda down it; clicking a flag jumps to that project.
 - [`livePing.ts`](src/lib/livePing.ts): the one-per-page-load ping they all share.
 
 ## The rest of the page

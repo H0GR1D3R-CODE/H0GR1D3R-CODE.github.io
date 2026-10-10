@@ -1,8 +1,8 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { education, hero, projects } from "@/data/resume";
 import { liveProjects, useLiveStatus } from "@/lib/livePing";
 import { cn } from "@/lib/cn";
-import { LiveBoard } from "./LiveBoard";
+import { HeroRun, pinProgress } from "./HeroRun";
 import { HeroBackdrop, HeroDrift } from "./Scenery";
 import { Showcase, demos } from "./Showcase";
 
@@ -35,7 +35,7 @@ function Headline() {
         <span className="block text-[clamp(1.25rem,1rem+0.9vw,1.75rem)] font-medium leading-tight tracking-[-0.015em] text-ink-2">
           <Words text={lead} from={0} />
         </span>
-        <span className="mt-2 block text-[clamp(3.1rem,1.5rem+5.6vw,5.25rem)] font-extrabold leading-[0.96] tracking-[-0.024em]">
+        <span className="hero-claim mt-2 block font-extrabold leading-[0.96] tracking-[-0.024em]">
           <Words text={statement} from={count(lead)} />
           <span className="whitespace-nowrap text-straw-soft">
             <Words text={emphasis} from={count(lead) + count(statement)} />
@@ -55,73 +55,129 @@ const facts = [
   `graduating ${education[0].end.replace(" (expected)", "")}`,
 ];
 
+/** Must match the media query on `.hero-pin` in globals.css. */
+const PIN_QUERY = "(min-width: 64rem) and (min-height: 680px) and (prefers-reduced-motion: no-preference)";
+
+/** True where the hero is pinned: a wide, tall-enough screen with motion allowed. */
+function usePinned() {
+  const [pinned, setPinned] = useState(() => window.matchMedia(PIN_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(PIN_QUERY);
+    const onChange = () => setPinned(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return pinned;
+}
+
 /**
  * The hero is always the night scene, whichever theme the page is in. The
  * left side makes the claim; the right side is the evidence: the live
- * projects themselves, in a deck you can run from. `arrived` flips once the
- * loading screen lifts, which starts the headline and deals the deck.
+ * projects themselves, in a deck you can run from.
+ *
+ * On a wide screen the hero is pinned: it stays put while the page scrolls
+ * through one step per project, and each step brings the next project to
+ * the front of the deck. Elsewhere the deck turns on its own until someone
+ * picks a project. `arrived` flips once the loading screen lifts, which
+ * starts the headline and deals the deck.
  */
 export function Hero({ arrived }: { arrived: boolean }) {
   const status = useLiveStatus(arrived);
+  const pinned = usePinned();
+  const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(demos[0].id);
-  /** The deck turns on its own until the visitor picks something. */
+  /** Where the hero is not pinned, the deck turns on its own until the visitor picks something. */
   const [auto, setAuto] = useState(true);
 
+  // Pinned: the scroll position decides which project is in front.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!pinned || !section) return;
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      const step = Math.min(demos.length - 1, Math.floor(pinProgress(section) * demos.length));
+      setActive(demos[step].id);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pinned]);
+
   const select = (id: string, byVisitor: boolean) => {
+    const section = sectionRef.current;
+    if (pinned && section) {
+      // Picking a project while pinned scrolls to that project's step, so the page and the deck stay in agreement.
+      const step = demos.findIndex((p) => p.id === id);
+      const travel = section.offsetHeight - window.innerHeight;
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: top + ((step + 0.5) / demos.length) * travel });
+      return;
+    }
     if (byVisitor) setAuto(false);
     setActive(id);
   };
 
   return (
     <section
+      ref={sectionRef}
       id="top"
       data-theme="night"
       aria-label="Introduction"
-      className={cn(
-        "hero-scene relative isolate -mt-[4.5rem] overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)] text-ink",
-        arrived && "arrived"
-      )}
+      className={cn("hero-scene hero-pin relative isolate -mt-[4.5rem] text-ink", arrived && "arrived")}
+      style={{ "--steps": demos.length } as CSSProperties}
     >
-      <HeroBackdrop />
+      <div className="hero-stage relative overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)]">
+        <HeroBackdrop />
 
-      <div className="relative mx-auto grid max-w-[76rem] gap-x-14 gap-y-10 px-4 pb-12 pt-24 sm:px-8 lg:min-h-svh lg:grid-cols-[minmax(0,33rem)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-8 lg:pb-10 lg:pt-24">
-        <div className="hero-sink lg:col-start-1 lg:row-start-2">
-          <p className="fade-up mb-6 inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm text-ink-2" style={delay(0)}>
-            <span className="size-2 rounded-full bg-straw" aria-hidden="true" />
-            <span className="font-semibold text-ink">{hero.status}</span>
-            <span aria-hidden="true" className="text-edge">/</span>
-            <span>{hero.where}</span>
-          </p>
+        <div className="hero-grid relative mx-auto grid max-w-[76rem] gap-x-14 gap-y-9 px-4 pb-10 pt-24 sm:px-8 lg:grid-cols-[minmax(0,33rem)_minmax(0,1fr)] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-7 lg:pb-6">
+          <div className="hero-sink lg:col-start-1 lg:row-start-2">
+            <p className="fade-up mb-5 inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm text-ink-2" style={delay(0)}>
+              <span className="size-2 rounded-full bg-straw" aria-hidden="true" />
+              <span className="font-semibold text-ink">{hero.status}</span>
+              <span aria-hidden="true" className="text-edge">/</span>
+              <span>{hero.where}</span>
+            </p>
 
-          <Headline />
+            <Headline />
 
-          <p className="fade-up mt-6 max-w-[33rem] text-lg text-ink-2" style={delay(520)}>
-            {hero.intro}
-          </p>
+            <p className="hero-intro fade-up mt-5 max-w-[33rem] text-lg text-ink-2" style={delay(520)}>
+              {hero.intro}
+            </p>
 
-          <ul className="fade-up mt-5 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem] text-ink-2" style={delay(620)}>
-            {facts.map((fact) => (
-              <li key={fact} className="flex items-center gap-2">
-                <span className="size-1 rounded-full bg-straw" aria-hidden="true" />
-                {fact}
-              </li>
-            ))}
-          </ul>
-        </div>
+            <ul className="fade-up mt-4 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem] text-ink-2" style={delay(620)}>
+              {facts.map((fact) => (
+                <li key={fact} className="flex items-center gap-2">
+                  <span className="size-1 rounded-full bg-straw" aria-hidden="true" />
+                  {fact}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="hero-sink lg:col-start-2 lg:row-span-2 lg:row-start-2 lg:self-center [@media(max-height:820px)]:lg:self-start">
-          <Showcase active={active} auto={auto && arrived} onSelect={select} status={status} />
-        </div>
+          <div className="hero-sink lg:col-start-2 lg:row-span-2 lg:row-start-2 lg:self-center">
+            <Showcase active={active} auto={auto && arrived && !pinned} onSelect={select} status={status} />
+          </div>
 
-        <div className="hero-sink lg:col-start-1 lg:row-start-3">
-          <div className="fade-up" style={delay(760)}>
-            <LiveBoard status={status} active={active} onPreview={(id) => select(id, true)} />
+          <div className="hero-sink lg:col-start-1 lg:row-start-3">
+            <div className="fade-up" style={delay(760)}>
+              <HeroRun active={active} pinned={pinned} onSelect={(id) => select(id, true)} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* The night scene ends in a snow drift, and the page below sits on the snow. */}
-      <HeroDrift />
+        {/* The night scene ends in a snow drift, and the page below sits on the snow. */}
+        <HeroDrift />
+      </div>
     </section>
   );
 }

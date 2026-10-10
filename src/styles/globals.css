@@ -219,12 +219,6 @@ html {
       box-shadow: none;
     }
   }
-
-  /* The row for whichever project is in the front window is lit, so the list and the deck read as one thing. */
-  .live-row:hover,
-  .live-row.is-active {
-    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--straw) 13%, transparent) 55%, transparent);
-  }
 }
 
 /* ── Loading screen ─────────────────────────────────────────────────────── */
@@ -386,6 +380,78 @@ html.no-boot #boot {
 .code-window .tok-keyword,
 .code-window .tok-note {
   color: #ecc273;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.hero-claim {
+  font-size: clamp(3.1rem, 1.5rem + 5.6vw, 5.25rem);
+}
+@media (min-width: 64rem) {
+  /* The stage is one screen tall: its content plus the snow drift under it. */
+  .hero-grid {
+    min-height: calc(100svh - clamp(5rem, 9vw, 7.5rem));
+  }
+  /* The deck is sized by the height of the screen as well as the column, so its tabs stay above the drift. */
+  .showcase {
+    max-width: 66svh;
+    margin-left: auto;
+  }
+  /* On a short laptop screen the headline and spacing give way so nothing is cut off. */
+  .hero-claim {
+    font-size: min(clamp(3.1rem, 1.5rem + 5.6vw, 5.25rem), 9.4svh);
+  }
+}
+@media (min-width: 64rem) and (max-height: 800px) {
+  .hero-grid {
+    padding-top: 5.25rem;
+    padding-bottom: 0.75rem;
+    row-gap: 1.1rem;
+  }
+  .hero-intro {
+    font-size: 1rem;
+    margin-top: 0.9rem;
+  }
+  /* Keep the deck's tabs on one line so none of them slips under the drift. */
+  .showcase [role="tablist"] {
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+    margin-top: 0.9rem;
+  }
+  .showcase [role="tab"] {
+    padding-inline: 0.6rem;
+    font-size: 0.8125rem;
+  }
+}
+/* Pinned: the hero is taller than the screen by one step per project, and
+   the stage inside it sticks. Scrolling through the extra height is what
+   turns the deck (Hero.tsx reads it). The query must match PIN_QUERY there. */
+@media (min-width: 64rem) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
+  .hero-pin {
+    height: calc(100svh + var(--steps) * 34svh);
+  }
+  .hero-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+  }
+}
+
+/* A flag on the hero's little run: a 44px button standing on the snow at its pole. */
+.run-flag {
+  position: absolute;
+  width: 44px;
+  height: 52px;
+  padding: 3px 9px 2px;
+  border-radius: 0.5rem;
+  transform: translate(-13px, -100%);
+  cursor: pointer;
+}
+.run-flag:hover .flag-pennant {
+  transform: scaleX(0.8);
+}
+.run-flag[data-found] .flag-pennant {
+  fill: var(--straw);
+  transform: scaleX(1);
 }
 
 /* ── Showcase deck ──────────────────────────────────────────────────────── */
@@ -782,15 +848,6 @@ html.no-boot #boot {
     }
   }
 
-  .live-checking {
-    animation: live-checking 1.1s ease-in-out infinite alternate;
-  }
-  @keyframes live-checking {
-    to {
-      opacity: 0.25;
-    }
-  }
-
   /* The figure never quite sits still: its paws type and its work floats. */
   .typing {
     animation: typing 0.46s ease-in-out infinite alternate;
@@ -930,13 +987,13 @@ html.no-boot #boot {
       }
     }
 
-    /* As the hero leaves: the scenery sinks while the text and the deck
-       drift up and fade, so the page seems to pull away from it. */
+    /* As the hero leaves (after any pinning is over): the scenery sinks while
+       the text and the deck drift up and fade, so the page seems to pull away. */
     .parallax-far,
     .parallax-near {
       animation: sink linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100svh;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
     }
     .parallax-far {
       --sink: 7rem;
@@ -952,8 +1009,8 @@ html.no-boot #boot {
     @media (min-width: 64rem) {
       .hero-sink {
         animation: hero-leave linear both;
-        animation-timeline: scroll(root);
-        animation-range: 4rem 85svh;
+        animation-timeline: --hero;
+        animation-range: exit 5% exit 80%;
       }
       @keyframes hero-leave {
         to {
