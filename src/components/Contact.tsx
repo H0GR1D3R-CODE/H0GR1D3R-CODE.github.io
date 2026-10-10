@@ -55,7 +55,7 @@ export function Footer() {
     <footer className="bg-(--drift-bottom) text-[#0b1622]">
       <div className="mx-auto flex max-w-[76rem] flex-wrap items-center justify-between gap-x-8 gap-y-2 px-4 pb-8 pt-2 text-sm sm:px-8">
         <p>
-          © {new Date().getFullYear()} {profile.name}. Built with React, Vite and Tailwind.
+          © {new Date().getFullYear()} {profile.name}
         </p>
         <a
           href={profile.repoUrl}

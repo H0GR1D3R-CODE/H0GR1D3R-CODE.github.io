@@ -115,7 +115,7 @@ export function Loader({ onLift }: { onLift: () => void }) {
           <Mark className="size-8" />
           {profile.name}
         </p>
-        <p className="mt-2 text-ink-2">Checking that everything I say is running actually is.</p>
+        <p className="mt-2 text-ink-2">Checking each live project from your browser.</p>
 
         <ol className="mt-6 flex flex-col gap-2 font-mono text-[0.8125rem] sm:text-sm">
           {lines.map((line) => (

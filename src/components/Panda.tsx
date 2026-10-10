@@ -2,7 +2,8 @@
 // same shapes. It works at a laptop in About, sleds the hills and the
 // timeline, and peeks over the footer drift.
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { cn } from "@/lib/cn";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 export function HatGradient({ id }: { id: string }) {
@@ -41,18 +42,20 @@ export function PandaHead({ hatId, blink = false, look = false, snowOnHat = fals
         </g>
       </g>
       <ellipse cx="980" cy="327" rx="7" ry="4.5" fill="#131C26" />
-      <path d="M880 272 Q980 292 1080 272 L980 208 Z" fill={`url(#${hatId})`} />
-      <g fill="none" stroke="#9C7430" strokeWidth="1.4" opacity="0.55">
-        <path d="M980 208 L912 276M980 208 L946 281M980 208 L980 282M980 208 L1014 281M980 208 L1048 276" />
-        <path d="M930 240 Q980 252 1030 240" />
+      <g className="panda-hat">
+        <path d="M880 272 Q980 292 1080 272 L980 208 Z" fill={`url(#${hatId})`} />
+        <g fill="none" stroke="#9C7430" strokeWidth="1.4" opacity="0.55">
+          <path d="M980 208 L912 276M980 208 L946 281M980 208 L980 282M980 208 L1014 281M980 208 L1048 276" />
+          <path d="M930 240 Q980 252 1030 240" />
+        </g>
+        <path d="M880 272 Q980 292 1080 272" fill="none" stroke="#9C7430" strokeWidth="2.2" opacity="0.7" />
+        {snowOnHat && (
+          <path
+            d="M980 205 C 962 215, 950 224, 944 233 C 958 229, 966 236, 980 231 C 994 236, 1002 229, 1016 233 C 1010 224, 998 215, 980 205 Z"
+            fill="#EEF4F8"
+          />
+        )}
       </g>
-      <path d="M880 272 Q980 292 1080 272" fill="none" stroke="#9C7430" strokeWidth="2.2" opacity="0.7" />
-      {snowOnHat && (
-        <path
-          d="M980 205 C 962 215, 950 224, 944 233 C 958 229, 966 236, 980 231 C 994 236, 1002 229, 1016 233 C 1010 224, 998 215, 980 205 Z"
-          fill="#EEF4F8"
-        />
-      )}
     </>
   );
 }
@@ -84,6 +87,35 @@ export function Pine({ x, y, scale = 1 }: { x: number; y: number; scale?: number
       d="M0 0 L-10 17 H-5 L-15 34 H-8 L-19 52 H-3 V60 H3 V52 H19 L8 34 H15 L5 17 H10 Z"
     />
   );
+}
+
+/**
+ * Makes a panda's eyes follow the pointer. `faceAt` is how far down the
+ * element the face sits, from 0 (top) to 1 (bottom).
+ */
+function useLookAt(ref: RefObject<HTMLElement | SVGSVGElement | null>, faceAt: number, enabled: boolean) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !enabled) return;
+    let frame = 0;
+    const onMove = (e: PointerEvent) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height * faceAt);
+        const dist = Math.hypot(dx, dy) || 1;
+        const reach = Math.min(dist / 240, 1);
+        el.style.setProperty("--look-x", ((dx / dist) * reach * 3.4).toFixed(2));
+        el.style.setProperty("--look-y", ((dy / dist) * reach * 2.6).toFixed(2));
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(frame);
+    };
+  }, [ref, faceAt, enabled]);
 }
 
 /** One slot in the scroll sequence: see `.act` in globals.css. */
@@ -122,29 +154,8 @@ export function PandaAtWork({ className }: { className?: string }) {
   const ref = useRef<SVGSVGElement>(null);
   const reduced = usePrefersReducedMotion();
 
-  useEffect(() => {
-    const svg = ref.current;
-    if (!svg || reduced) return;
-    let frame = 0;
-    const onMove = (e: PointerEvent) => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const r = svg.getBoundingClientRect();
-        // The face sits about 43% of the way down the drawing.
-        const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height * 0.43);
-        const dist = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(dist / 240, 1);
-        svg.style.setProperty("--look-x", ((dx / dist) * reach * 3.4).toFixed(2));
-        svg.style.setProperty("--look-y", ((dy / dist) * reach * 2.6).toFixed(2));
-      });
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(frame);
-    };
-  }, [reduced]);
+  // The face sits about 43% of the way down the drawing.
+  useLookAt(ref, 0.43, !reduced);
 
   return (
     <svg
@@ -247,20 +258,59 @@ export function PandaAtWork({ className }: { className?: string }) {
   );
 }
 
-/** The footer scene: the panda comes up over a snow drift, as on the profile banner. */
+/** Where along the drift the panda can come up, as a percentage from the left. */
+const SPOTS = [84, 60, 38, 17];
+
+/**
+ * The footer scene: the panda behind a snow drift, as on the profile banner.
+ * It is not just scenery. Its eyes follow the pointer, it comes up and tips
+ * its hat when the pointer (or keyboard focus) reaches it, and pressing it
+ * sends it under the snow to come up somewhere else along the drift.
+ */
 export function PandaDrift() {
+  const reduced = usePrefersReducedMotion();
+  const ref = useRef<HTMLButtonElement>(null);
+  const [spot, setSpot] = useState(0);
+  const [ducked, setDucked] = useState(false);
+  // The face sits about 63% of the way down the button.
+  useLookAt(ref, 0.63, !reduced);
+
+  const hop = () => {
+    if (ducked) return;
+    setDucked(true);
+    window.setTimeout(
+      () => {
+        setSpot((s) => (s + 1) % SPOTS.length);
+        window.setTimeout(() => setDucked(false), 140);
+      },
+      reduced ? 0 : 360
+    );
+  };
+
   return (
-    <div className="relative h-36 overflow-y-clip sm:h-44" aria-hidden="true">
-      <svg viewBox="872 196 216 172" className="peek-up absolute bottom-[38%] right-[14%] h-[62%]" focusable="false">
-        <defs>
-          <HatGradient id="hat-drift" />
-        </defs>
-        <PandaHead hatId="hat-drift" blink snowOnHat />
-      </svg>
+    <div className="relative h-36 [clip-path:inset(-4rem_0_0_0)] sm:h-44">
+      <button
+        ref={ref}
+        type="button"
+        onClick={hop}
+        aria-label="The panda. Press to send it somewhere else along the drift."
+        className={cn("panda-peek absolute bottom-[34%] h-[62%] -translate-x-1/2 rounded-xl", ducked && "is-ducked")}
+        style={{ left: `${SPOTS[spot]}%` }}
+      >
+        <span className="peek-up block h-full">
+          <svg viewBox="872 196 216 172" className="panda-rise block h-full w-auto overflow-visible" aria-hidden="true" focusable="false">
+            <defs>
+              <HatGradient id="hat-drift" />
+            </defs>
+            <PandaHead hatId="hat-drift" blink look snowOnHat />
+          </svg>
+        </span>
+      </button>
       <svg
         viewBox="0 0 1200 120"
         preserveAspectRatio="none"
-        className="absolute inset-x-0 bottom-0 h-[62%] w-full"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[62%] w-full"
+        aria-hidden="true"
         focusable="false"
       >
         <defs>

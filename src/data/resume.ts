@@ -34,9 +34,9 @@ export const nav = [
 export const hero = {
   status: "Open to technical roles",
   where: "Bengaluru, India",
-  lead: "Nebin Stanly builds",
-  statement: "software that",
-  emphasis: "actually runs.",
+  lead: "Nebin Stanly builds software",
+  statement: "from concept",
+  emphasis: "to production.",
   intro:
     "BCA (Hons.) student at CHRIST University, working across full-stack web, machine learning and IoT. Every project here is deployed or runnable, and some of them will run right here on this page.",
 } as const;

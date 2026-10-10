@@ -762,6 +762,37 @@ html.no-boot #boot {
   stroke-dashoffset: 0.62;
 }
 
+/* The footer panda: comes up and tips its hat under the pointer or keyboard
+   focus, and goes under the snow when pressed (Panda.tsx then moves it). */
+.panda-peek {
+  cursor: pointer;
+}
+.panda-rise {
+  transition: transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.panda-hat {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.panda-peek .panda-hat {
+  transition: transform 0.45s cubic-bezier(0.3, 1.7, 0.5, 1) 0.06s;
+}
+.panda-peek:hover .panda-rise,
+.panda-peek:focus-visible .panda-rise {
+  transform: translateY(-12%);
+}
+.panda-peek:hover .panda-hat,
+.panda-peek:focus-visible .panda-hat {
+  transform: translateY(-20%) rotate(-11deg);
+}
+.panda-peek.is-ducked .panda-rise {
+  transform: translateY(125%);
+  transition: transform 0.32s cubic-bezier(0.6, 0, 0.8, 0.3);
+}
+.panda-peek.is-ducked .panda-hat {
+  transform: none;
+}
+
 /* The panda's eyes follow the pointer: Panda.tsx sets --look-x / --look-y. */
 .panda-look {
   transform: translate(calc(var(--look-x, 0) * 1px), calc(var(--look-y, 0) * 1px));
