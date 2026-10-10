@@ -174,7 +174,8 @@ export function RouteMap() {
     const { x, y } = at(p);
     const size = labelPx * u;
     if (!compact) return { x: x + p.label.dx * u, y: y + p.label.dy * u, anchor: p.label.anchor, size };
-    if (p.id === ORIGIN) return { x: x - 6 * u, y: y - 22 * u, anchor: "start" as const, size };
+    // The full name would run into Hebbal at this size; the readout below the map names the start.
+    if (p.id === ORIGIN) return { x, y: y - 22 * u, anchor: "middle" as const, size };
     const half = p.name.length * size * 0.3 + 6 * u;
     const lift = 15;
     return {
@@ -356,7 +357,7 @@ export function RouteMap() {
                 fontWeight={800}
                 strokeWidth={4 * u}
               >
-                {origin.name}
+                {compact ? "Start" : origin.name}
               </text>
             </g>
 
