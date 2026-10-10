@@ -3,35 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#08080A" />
+    <meta name="theme-color" content="#F6FAFC" />
 
-    <title>Nebin Stanly — Full-Stack, ML &amp; IoT Developer</title>
+    <!-- Apply a saved "snowy night" choice before first paint, so the page never flashes the wrong theme. -->
+    <script>
+      try {
+        if (localStorage.getItem("theme") === "night") {
+          document.documentElement.dataset.theme = "night";
+          document.querySelector('meta[name="theme-color"]').content = "#0B1622";
+        }
+      } catch (e) {}
+    </script>
+
+    <title>Nebin Stanly — software that actually runs</title>
     <meta
       name="description"
-      content="Nebin Stanly — BCA (Hons.) student at CHRIST University, Bengaluru. Full-stack development, machine learning &amp; NLP, IoT systems and cybersecurity. Projects: EcoTrack, PhishGuard, Corridor, Fake News Detection."
+      content="Nebin Stanly, BCA (Hons.) student at CHRIST University, Bengaluru. Full-stack, machine learning and IoT projects with live demos: EcoTrack, Corridor, PhishGuard, FitAdapt AI, Veritas."
     />
     <meta name="author" content="Nebin Stanly" />
     <link rel="canonical" href="https://h0gr1d3r-code.github.io/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Nebin Stanly — Full-Stack, ML & IoT Developer" />
+    <meta property="og:title" content="Nebin Stanly — software that actually runs" />
     <meta
       property="og:description"
-      content="Full-stack development, machine learning, IoT and cybersecurity. Explore live projects, skills and experience."
+      content="Full-stack, machine learning and IoT projects with live demos, plus a road map of Bengaluru you can re-route."
     />
     <meta property="og:url" content="https://h0gr1d3r-code.github.io/" />
-    <meta property="og:image" content="/og.png" />
+    <meta property="og:image" content="https://h0gr1d3r-code.github.io/og.png" />
     <meta property="og:site_name" content="Nebin Stanly" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Nebin Stanly — Full-Stack, ML & IoT Developer" />
+    <meta name="twitter:title" content="Nebin Stanly — software that actually runs" />
     <meta
       name="twitter:description"
-      content="Full-stack development, machine learning, IoT and cybersecurity."
+      content="Full-stack, machine learning and IoT projects with live demos."
     />
-    <meta name="twitter:image" content="/og.png" />
+    <meta name="twitter:image" content="https://h0gr1d3r-code.github.io/og.png" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
@@ -46,7 +56,7 @@
         "email": "mailto:nebinstanly12@gmail.com",
         "jobTitle": "Full-Stack, ML & IoT Developer",
         "knowsAbout": ["Full-stack development", "Machine learning", "Natural language processing", "Internet of Things", "Cybersecurity", "Android development"],
-        "alumniOf": {
+        "affiliation": {
           "@type": "CollegeOrUniversity",
           "name": "CHRIST (Deemed to be University), Bengaluru"
         },
@@ -58,6 +68,13 @@
     </script>
   </head>
   <body>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem">
+        This site needs JavaScript to draw the page. You can still
+        <a href="/Nebin-Stanly-CV.pdf">download Nebin Stanly's CV</a> or email
+        <a href="mailto:nebinstanly12@gmail.com">nebinstanly12@gmail.com</a>.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

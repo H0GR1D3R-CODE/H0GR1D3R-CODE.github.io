@@ -1,12 +1,12 @@
 {
-  "name": "Nebin Stanly — Full-Stack & IoT Developer",
+  "name": "Nebin Stanly — software that actually runs",
   "short_name": "Nebin Stanly",
-  "description": "Portfolio of Nebin Stanly — full-stack web & mobile development, IoT systems, and generative AI engineering.",
+  "description": "Portfolio of Nebin Stanly: full-stack, machine learning and IoT projects with live demos.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#08080A",
-  "theme_color": "#08080A",
+  "background_color": "#F6FAFC",
+  "theme_color": "#F6FAFC",
   "icons": [
     {
       "src": "/favicon.svg",

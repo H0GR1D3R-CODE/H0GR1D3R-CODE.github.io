@@ -1,109 +1,324 @@
 // ─────────────────────────────────────────────────────────────────────────
-// Single source of truth for all site copy. Every section component reads
-// from here — edit content in exactly one place.
+// Single source of truth for all site copy. Every component reads from
+// here — edit content in exactly one place.
 //
-// Sources: the résumé PDF (experience, education, metrics, certifications,
-// skills) and the READMEs of the public repos at github.com/H0GR1D3R-CODE
-// (the extra projects and the repo archive). Numbers are quoted from those
-// sources, not rounded up.
+// Sources: the résumé PDF (experience, education, certifications, skills,
+// leadership, awards) and the READMEs of the public repos at
+// github.com/H0GR1D3R-CODE (project descriptions and every project number).
+// Nothing here is rounded up or invented.
 // ─────────────────────────────────────────────────────────────────────────
 
 export const profile = {
   name: "Nebin Stanly",
-  initials: "NS",
   role: "Full-Stack, ML & IoT Developer",
-  tagline: "Building at the intersection of software, machine learning, and hardware — secure by design.",
   university: "CHRIST (Deemed to be University), Bengaluru",
   degree: "Bachelor of Computer Applications (Hons.)",
-  batch: "Batch 2024 – Present",
   location: "Bengaluru, Karnataka, India",
   email: "nebinstanly12@gmail.com",
-  phone: "+91 8921951597",
+  phone: "+91 89219 51597",
   linkedin: "https://www.linkedin.com/in/nebin-stanly-379404231/",
-  linkedinLabel: "linkedin.com/in/nebin-stanly",
   github: "https://github.com/H0GR1D3R-CODE",
   githubLabel: "github.com/H0GR1D3R-CODE",
-  githubUsername: "H0GR1D3R-CODE",
   cvPath: "/Nebin-Stanly-CV.pdf",
   repoUrl: "https://github.com/H0GR1D3R-CODE/H0GR1D3R-CODE.github.io",
 } as const;
 
-/** Domains repeated in the skills marquee — the résumé's own Domains line. */
-export const focusAreas = [
-  "Full-Stack Development",
-  "Machine Learning & NLP",
-  "Internet of Things",
-  "Cybersecurity",
-  "Mobile Development",
-  "Automation",
+export const nav = [
+  { id: "work", label: "Work" },
+  { id: "about", label: "About" },
+  { id: "timeline", label: "Timeline" },
+  { id: "contact", label: "Contact" },
 ] as const;
 
-export type ApproachPrinciple = {
-  title: string;
-  description: string;
-};
+export const hero = {
+  headline: "Nebin Stanly builds software that actually runs.",
+  intro:
+    "BCA (Hons.) student at CHRIST University, Bengaluru, working across full-stack web, machine learning and IoT. Every project here is deployed or runnable, and most are one click from a live demo.",
+} as const;
 
-/**
- * Working principles, restated from the professional summary, experience
- * and projects already in this file — not new claims, just surfaced as their
- * own moment on the page.
- */
-export const approach: ApproachPrinciple[] = [
-  {
-    title: "Secure by design",
-    description:
-      "Infrastructure and code get built with the vulnerability surface in mind from the start — from diagnosing network security in the field to token-verified API routes and explainable phishing detection.",
-  },
-  {
-    title: "Full-stack fluency",
-    description:
-      "Comfortable moving from a Firebase-backed Flask API to a React front end to a scikit-learn model on the same project, so a feature stays coherent across every layer it touches.",
-  },
-  {
-    title: "Hardware-aware software",
-    description:
-      "Time spent programming Arduino prototypes and wiring sensor networks means software decisions account for real-world latency, power, and failure modes — not just the happy path.",
-  },
-  {
-    title: "Measured, not assumed",
-    description:
-      "Benchmarked classifiers on 40,000+ articles, backtested forecasts, and shipped algorithms with live in-browser tests — claims get a number next to them.",
-  },
-];
-
+/** The résumé's professional summary, kept verbatim for metadata and print. */
 export const summary =
   "Bachelor of Computer Applications (Hons.) undergraduate with hands-on experience in full-stack development, machine learning, IoT and IT infrastructure. Builds and deploys secure, user-focused applications from concept to production. Quick learner and collaborative team player seeking a technical role to deliver reliable, scalable solutions.";
 
-/** Headline numbers, each one lifted from a résumé bullet. */
-export type Metric = {
-  value: number;
-  suffix: string;
-  label: string;
-  context: string;
-};
-
-export const metrics: Metric[] = [
-  { value: 35, suffix: "+", label: "Devices deployed", context: "IoT, CCTV & biometric controls across 3 office sites" },
-  { value: 99, suffix: "%", label: "Uptime maintained", context: "while resolving 50+ connectivity issues" },
-  { value: 40, suffix: "+", label: "REST APIs", context: "behind the EcoTrack carbon-footprint platform" },
-  { value: 40, suffix: "k+", label: "Articles benchmarked", context: "across 4 ML classifiers for fake-news detection" },
-  { value: 500, suffix: "+", label: "Students reached", context: "through 5+ sustainability awareness programs" },
-  { value: 15, suffix: "+", label: "Events supported", context: "building props and managing on-site set-up" },
+export const about = [
+  "I'm a BCA (Hons.) student at CHRIST University's Yeshwanthpur campus in Bengaluru. I like taking things past the tutorial stage: every project on this page is something I built, ran end to end, and debugged until it worked.",
+  "Most of what I build sits between full-stack web, IoT and real-time systems, with more machine learning and NLP lately and cybersecurity on the side. One summer I configured and deployed 35+ IoT devices, CCTV cameras and biometric access controls across three offices, so I think about what happens to software once it meets real hardware and real networks.",
+  "I'm looking for a technical role where I can ship reliable things with a team.",
 ];
 
-export type Language = {
+// ── Work ─────────────────────────────────────────────────────────────────
+
+export type Area = "Web" | "ML" | "IoT" | "Mobile" | "Tools";
+
+export const areas: Area[] = ["Web", "ML", "IoT", "Mobile", "Tools"];
+
+export type ProjectMedia = {
+  /** A still image. For recordings this is the first frame, shown until the recording plays. */
+  still: string;
+  /** Animated recording of the real site, loaded only when it scrolls into view. */
+  recording?: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
+export type Project = {
+  id: string;
   name: string;
-  level: string;
-  weight: number; // 0-1, drives the proficiency meter fill
+  tagline: string;
+  /** capstone and latest get the large layouts, featured get a screenshot card, more is a compact row. */
+  tier: "capstone" | "latest" | "featured" | "more";
+  period: string;
+  description: string;
+  points?: string[];
+  stack: string[];
+  areas: Area[];
+  live?: string;
+  code: string;
+  extra?: { label: string; href: string };
+  media?: ProjectMedia;
 };
 
-export const languages: Language[] = [
-  { name: "English", level: "Full Professional", weight: 1 },
-  { name: "Malayalam", level: "Full Professional", weight: 1 },
-  { name: "Hindi", level: "Limited Working", weight: 0.55 },
-  { name: "Arabic", level: "Limited Working", weight: 0.55 },
-  { name: "German", level: "Elementary", weight: 0.3 },
+const gh = (repo: string) => `https://github.com/H0GR1D3R-CODE/${repo}`;
+
+export const projects: Project[] = [
+  {
+    id: "ecotrack",
+    name: "EcoTrack",
+    tagline: "Know your carbon, then change it.",
+    tier: "capstone",
+    period: "Jul – Sep 2026",
+    description:
+      "A cloud-based carbon footprint tracker, built as my BCA specialization project and aligned with UN SDG 13 (Climate Action). You log everyday activity across seven categories, and every entry is converted to kg of CO₂ with a published emission factor you can check.",
+    points: [
+      "Forecasts your month-end footprint with an 80% prediction interval, backtested against a naive baseline.",
+      "Recommends swaps ranked by how much they save, each citing the DEFRA, IPCC or CEA factors behind it.",
+      "Scans bills: photograph an electricity bill and a vision model reads the units for you to confirm.",
+      "40+ REST APIs, every route behind Firebase token verification and ownership checks, with optional 2FA.",
+    ],
+    stack: ["React", "Vite", "Flask", "Firebase Firestore", "Firebase Auth", "Chart.js"],
+    areas: ["Web"],
+    live: "https://ecotrk.web.app/",
+    code: gh("EcoTracker"),
+    extra: { label: "Try the 30-second estimator", href: "https://ecotrk.web.app/estimate" },
+    media: {
+      still: "/shots/ecotrack-poster.webp",
+      recording: "/shots/ecotrack.webp",
+      alt: "A tour of EcoTrack: the landing page reading “Know your carbon. Then change it.”, the 30-second footprint estimator, and the sourced explainers.",
+      width: 1200,
+      height: 638,
+    },
+  },
+  {
+    id: "corridor",
+    name: "Corridor",
+    tagline: "An emergency-routing atlas for Bengaluru.",
+    tier: "latest",
+    period: "Oct 2026",
+    description:
+      "Finds the fastest route for an ambulance when every road's travel time depends on the day, the hour, the weather and what is happening in the city. The map at the top of this page is a small cut of it.",
+    points: [
+      "Routes over a graph of 832 junctions and 1,630 road segments, with 15 hospitals.",
+      "Races five shortest-path algorithms on the same trip: Dijkstra, A*, Bidirectional Dijkstra, Bellman–Ford and Greedy best-first.",
+      "Backs its verdict with ten tests and a benchmark lab that run live in the browser.",
+    ],
+    stack: ["JavaScript", "Graph algorithms", "Canvas", "No build step, no dependencies"],
+    areas: ["Web"],
+    live: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/",
+    code: gh("corridor-routing-atlas"),
+    extra: { label: "Watch the 5-minute film", href: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/film/" },
+    media: {
+      still: "/shots/corridor-poster.webp",
+      recording: "/shots/corridor.webp",
+      alt: "Corridor's live board: ambulances being routed to hospitals across a map of Bengaluru, above counters for 832 junctions, 1,630 road segments, 15 hospitals and 5 algorithms raced.",
+      width: 1200,
+      height: 638,
+    },
+  },
+  {
+    id: "phishguard",
+    name: "PhishGuard",
+    tagline: "A phishing URL detector that explains itself.",
+    tier: "featured",
+    period: "Sep 2026",
+    description:
+      "Paste a URL, get a verdict: safe, suspicious or malicious. A Random Forest trained on 6,494 real labelled URLs reads 24 features straight from the URL string, and SHAP explains in plain English which ones drove the call. It scores 88.3% accuracy and 95.7% ROC-AUC on a held-out test set.",
+    stack: ["Python", "FastAPI", "scikit-learn", "SHAP", "React", "Docker"],
+    areas: ["ML", "Web"],
+    code: gh("phishguard"),
+    media: {
+      still: "/shots/phishguard.webp",
+      alt: "PhishGuard flagging a URL as malicious with a 96% risk score and the five signals that drove the verdict.",
+      width: 1280,
+      height: 720,
+    },
+  },
+  {
+    id: "fitadapt",
+    name: "FitAdapt AI",
+    tagline: "A training plan that adapts to how you feel today.",
+    tier: "featured",
+    period: "Aug 2026",
+    description:
+      "Interactive front end for a multi-agent system that reads an athlete's soreness, sleep and energy each day and rewrites the training session to match. Includes a live Sensing → Decision → Execution pipeline you can step through. Sign-in and the model calls are mocked by default, so it all runs in the browser.",
+    stack: ["React", "Vite", "Tailwind CSS"],
+    areas: ["Web"],
+    live: "https://fitadapt-ai.vercel.app/",
+    code: gh("fitadapt-ai"),
+    media: {
+      still: "/shots/fitadapt.webp",
+      alt: "FitAdapt AI home screen with a biometric readout of an athlete's body.",
+      width: 1280,
+      height: 720,
+    },
+  },
+  {
+    id: "veritas",
+    name: "Veritas",
+    tagline: "Fake news detection with classic NLP.",
+    tier: "featured",
+    period: "Jul – Sep 2026",
+    description:
+      "TF-IDF features into Logistic Regression, SVM and Random Forest, behind a dashboard that shows every stage of the pipeline running on the article you paste in. On 7,732 held-out articles the SVM reaches 99.75% accuracy, but recall drops to 45.45% on a news subject it never trained on, and the write-up says so. Built with Don Pradeep.",
+    stack: ["Python", "scikit-learn", "NLTK", "Flask"],
+    areas: ["ML"],
+    live: "https://fake-news-detection-nlp.vercel.app/",
+    code: gh("fake-news-detection-nlp"),
+    media: {
+      still: "/shots/veritas.webp",
+      alt: "Veritas, a fake news detection dashboard styled as a newspaper forensics desk.",
+      width: 1280,
+      height: 720,
+    },
+  },
+  {
+    id: "hogrider",
+    name: "hogrider",
+    tagline: "A Clash Royale deck builder and analyzer.",
+    tier: "featured",
+    period: "2026",
+    description:
+      "Pick 8 cards and get a live elixir curve and matchup checks: win condition, spell support, and answers to swarms, air and tanks. Decks live in the URL, so sharing one is just copying the link.",
+    stack: ["React", "Vite", "GitHub Pages"],
+    areas: ["Web"],
+    live: "https://h0gr1d3r-code.github.io/hogrider/?deck=hog-rider,musketeer,ice-golem,ice-spirit,skeletons,cannon,fireball,the-log",
+    code: gh("hogrider"),
+    media: {
+      still: "/shots/hogrider.webp",
+      alt: "hogrider with the 2.6 hog cycle deck loaded: 2.6 average elixir, an elixir curve, and five passed matchup checks.",
+      width: 1280,
+      height: 720,
+    },
+  },
+  {
+    id: "collabcanvas",
+    name: "collabcanvas",
+    tagline: "Real-time collaborative whiteboard.",
+    tier: "more",
+    period: "Aug 2026",
+    description:
+      "Several people draw on one board at once, with live cursors and presence. Boards persist in MongoDB and are shared by link. The canvas engine is hand-rolled on the Canvas 2D API.",
+    stack: ["React", "Socket.IO", "Node/Express", "MongoDB"],
+    areas: ["Web"],
+    code: gh("collabcanvas"),
+  },
+  {
+    id: "campus-connect",
+    name: "campus-connect",
+    tagline: "Campus club and event platform.",
+    tier: "more",
+    period: "Aug 2026",
+    description:
+      "Students browse clubs and RSVP to events; club admins run their own calendar; a site admin onboards clubs. JWT auth with three roles, and API tests in Jest and Supertest.",
+    stack: ["React", "Node/Express", "MongoDB", "JWT"],
+    areas: ["Web"],
+    code: gh("campus-connect"),
+  },
+  {
+    id: "iot-environment-monitor",
+    name: "iot-environment-monitor",
+    tagline: "Sensor pipeline from device to cloud to analysis.",
+    tier: "more",
+    period: "Feb – Aug 2026",
+    description:
+      "ESP32 and DHT22 firmware, plus a Python simulator, publishing temperature, humidity and light to ThingSpeak, with pandas analysis and threshold alerts. It grew out of a wearable obstacle-detection prototype: an Arduino with two ultrasonic sensors, simulated in Tinkercad first.",
+    stack: ["Arduino/C++", "Python", "ThingSpeak API", "pandas"],
+    areas: ["IoT"],
+    code: gh("iot-environment-monitor"),
+  },
+  {
+    id: "expense-tracker-android",
+    name: "expense-tracker-android",
+    tagline: "Native Android expense tracker.",
+    tier: "more",
+    period: "Aug 2026",
+    description:
+      "Log expenses, set a monthly budget and see spending by category. Offline-first: everything is stored locally with Room and the app asks for no network permission.",
+    stack: ["Kotlin", "Jetpack Compose", "Room", "MVVM"],
+    areas: ["Mobile"],
+    code: gh("expense-tracker-android"),
+  },
+  {
+    id: "library-management-system",
+    name: "library-management-system",
+    tagline: "Console library system.",
+    tier: "more",
+    period: "Aug 2026",
+    description:
+      "Issue and return workflow with 14-day due dates and automatic overdue fines, persisted in SQLite and covered by JUnit 5 tests.",
+    stack: ["Java", "JDBC", "SQLite"],
+    areas: ["Tools"],
+    code: gh("library-management-system"),
+  },
+  {
+    id: "finance-analyzer-cli",
+    name: "finance-analyzer-cli",
+    tagline: "Personal finance from the terminal.",
+    tier: "more",
+    period: "Aug 2026",
+    description:
+      "Reads a transactions CSV and prints category breakdowns, monthly trends and top expenses, and exports charts as PNG.",
+    stack: ["Python", "pandas", "matplotlib"],
+    areas: ["Tools"],
+    code: gh("finance-analyzer-cli"),
+  },
 ];
+
+// ── About ────────────────────────────────────────────────────────────────
+
+export type SkillGroup = {
+  label: string;
+  items: string[];
+};
+
+export const skills: SkillGroup[] = [
+  {
+    label: "Languages",
+    items: ["Python", "Java", "C", "C++", "C# (.NET)", "JavaScript", "Kotlin", "SQL", "PL/SQL", "HTML5", "CSS3", "JSP"],
+  },
+  {
+    label: "Frameworks & libraries",
+    items: ["React", "Flask", "Node.js", "scikit-learn", "NLTK", "pandas", "Chart.js"],
+  },
+  {
+    label: "Databases & cloud",
+    items: ["Firebase (Firestore, Auth, Hosting)", "MongoDB", "MySQL", "Oracle Database", "Vercel"],
+  },
+  {
+    label: "Tools",
+    items: ["Git", "GitHub", "Android Studio", "UiPath (RPA)", "Arduino", "Tinkercad", "MySQL Workbench"],
+  },
+];
+
+export const spokenLanguages = [
+  { name: "English", level: "full professional" },
+  { name: "Malayalam", level: "full professional" },
+  { name: "Hindi", level: "limited working" },
+  { name: "Arabic", level: "limited working" },
+  { name: "German", level: "elementary" },
+];
+
+// ── Timeline sources (straight from the résumé) ──────────────────────────
 
 export type Experience = {
   org: string;
@@ -129,294 +344,35 @@ export const experience: Experience[] = [
   },
 ];
 
-export type ProjectLink = { label: string; href: string; kind: "live" | "code" };
-
-export type Project = {
-  index: string;
-  title: string;
-  tech: string[];
+export type EducationItem = {
+  institution: string;
+  credential: string;
+  result: string;
   start: string;
   end: string;
-  summary: string;
-  highlights: string[];
-  links: ProjectLink[];
-  /** Listed on the résumé PDF, as opposed to pulled in from GitHub only. */
-  onResume: boolean;
 };
 
-const gh = (repo: string) => `https://github.com/H0GR1D3R-CODE/${repo}`;
-
-export const projects: Project[] = [
+export const education: EducationItem[] = [
   {
-    index: "01",
-    title: "EcoTrack — Cloud-Based Carbon Footprint Tracker",
-    tech: ["React", "Python Flask", "Firebase", "Chart.js"],
-    start: "Jul 2026",
-    end: "Sep 2026",
-    summary:
-      "A full-stack platform that turns everyday activity across seven categories into kg CO₂, then closes the loop from measurement to action.",
-    highlights: [
-      "Powered by 40+ REST APIs; month-end emission forecasts with an 80% prediction interval and ranked reduction recommendations.",
-      "Every route secured with Firebase token verification, ownership checks and optional 2FA; AI bill scanning via a Groq vision model.",
-    ],
-    links: [
-      { label: "Live demo", href: "https://ecotrk.web.app/", kind: "live" },
-      { label: "GitHub", href: gh("EcoTracker"), kind: "code" },
-    ],
-    onResume: true,
+    institution: "CHRIST (Deemed to be University), Bengaluru",
+    credential: "Bachelor of Computer Applications (Hons.)",
+    result: "CGPA 8.22",
+    start: "Jul 2024",
+    end: "May 2027 (expected)",
   },
   {
-    index: "02",
-    title: "Fake News Detection using NLP & Machine Learning",
-    tech: ["Python", "NLP", "scikit-learn", "Flask"],
-    start: "Jul 2026",
-    end: "Sep 2026",
-    summary:
-      "An end-to-end NLP pipeline — cleaning, tokenization, TF-IDF — that classifies news articles as real or fake, with a dashboard showing every stage on real input.",
-    highlights: [
-      "Benchmarked 4 ML classifiers on 40,000+ articles; the best model reached 96% accuracy and a 0.95 F1-score.",
-      "Probed source leakage and temporal generalisation to test whether the headline accuracy actually holds up.",
-    ],
-    links: [
-      { label: "Live demo", href: "https://fake-news-detection-nlp.vercel.app/", kind: "live" },
-      { label: "GitHub", href: gh("fake-news-detection-nlp"), kind: "code" },
-    ],
-    onResume: true,
+    institution: "Christ Academy Junior College (CBSE), Bengaluru",
+    credential: "Class XII",
+    result: "81.8%",
+    start: "Jun 2022",
+    end: "Apr 2024",
   },
   {
-    index: "03",
-    title: "PhishGuard — Malicious URL Detector",
-    tech: ["Python", "FastAPI", "scikit-learn", "SHAP", "React"],
-    start: "Sep 2026",
-    end: "Sep 2026",
-    summary:
-      "Paste in a URL, get a safe / suspicious / malicious verdict, a confidence score, and a plain-English breakdown of which URL features drove the call.",
-    highlights: [
-      "Random Forest over 24 lexical and structural features, trained on 6,494 URLs from three public sources: 88.3% accuracy, 95.7% ROC-AUC on a held-out test set.",
-      "SHAP explains each prediction; no live network calls, so verdicts return in well under a second.",
-    ],
-    links: [{ label: "GitHub", href: gh("phishguard"), kind: "code" }],
-    onResume: false,
-  },
-  {
-    index: "04",
-    title: "Corridor — Emergency-Routing Atlas",
-    tech: ["JavaScript", "A*", "Dijkstra", "Canvas", "SVG"],
-    start: "Oct 2026",
-    end: "Oct 2026",
-    summary:
-      "Finds the fastest ambulance route across Bengaluru when every road's travel time depends on the hour, the weather and what is happening in the city.",
-    highlights: [
-      "Five shortest-path algorithms — Dijkstra, A*, Bidirectional, Bellman–Ford, Greedy — raced on a road graph of 832 junctions and 1,630 segments.",
-      "Ten tests run live in the browser, plus a benchmark across cities of roughly 60 to 8,000 junctions.",
-    ],
-    links: [
-      { label: "Live demo", href: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/", kind: "live" },
-      { label: "GitHub", href: gh("corridor-routing-atlas"), kind: "code" },
-    ],
-    onResume: false,
-  },
-  {
-    index: "05",
-    title: "FitAdapt AI — Adaptive Training System",
-    tech: ["React", "Vite", "Tailwind CSS", "Canvas", "SVG"],
-    start: "Aug 2026",
-    end: "Aug 2026",
-    summary:
-      "An interactive front end for a multi-agent system that reads an athlete's daily biometric state and rewrites their training session.",
-    highlights: [
-      "A live Sensing → Decision → Execution pipeline with a step-by-step reasoning trace and the tool-call output the agent would emit.",
-      "Hand-rolled SVG analytics and a canvas fatigue heat-map, in one ~4,650-line React file.",
-    ],
-    links: [
-      { label: "Live demo", href: "https://fitadapt-ai.vercel.app/", kind: "live" },
-      { label: "GitHub", href: gh("fitadapt-ai"), kind: "code" },
-    ],
-    onResume: false,
-  },
-  {
-    index: "06",
-    title: "IoT Smart Device for Visually Impaired Individuals",
-    tech: ["Python", "Arduino", "Ultrasonic Sensors", "Tinkercad", "ThingSpeak"],
-    start: "Feb 2026",
-    end: "Mar 2026",
-    summary:
-      "A wearable navigation-aid prototype, paired with a cloud-connected environment monitor that streams sensor readings and flags threshold breaches.",
-    highlights: [
-      "Arduino with 2 ultrasonic sensors detects obstacles up to 2 m away; circuit logic simulated in Tinkercad first, cutting hardware rework by ~40%.",
-      "Temperature, humidity and light streamed to ThingSpeak over REST, with pandas/matplotlib analysis, threshold alerts and pytest unit tests.",
-    ],
-    links: [{ label: "GitHub", href: gh("iot-environment-monitor"), kind: "code" }],
-    onResume: true,
-  },
-];
-
-export type RepoCategory = "Web Apps" | "ML & Security" | "Mobile & IoT" | "Systems & Tools";
-
-export const repoCategories: RepoCategory[] = ["Web Apps", "ML & Security", "Mobile & IoT", "Systems & Tools"];
-
-export type Repo = {
-  name: string;
-  description: string;
-  language: string;
-  category: RepoCategory;
-  date: string;
-  href: string;
-  live?: string;
-  featured?: boolean;
-};
-
-/** Every public repo worth showing, newest first. Mirrors github.com/H0GR1D3R-CODE. */
-export const repos: Repo[] = [
-  {
-    name: "corridor-routing-atlas",
-    description: "Emergency-routing atlas for Bengaluru: five shortest-path algorithms, live traffic scenes, in-browser tests and benchmarks.",
-    language: "JavaScript",
-    category: "Systems & Tools",
-    date: "Oct 2026",
-    href: gh("corridor-routing-atlas"),
-    live: "https://h0gr1d3r-code.github.io/corridor-routing-atlas/",
-    featured: true,
-  },
-  {
-    name: "phishguard",
-    description: "ML-based phishing and malicious URL detector — FastAPI, scikit-learn, SHAP explainability and a React front end.",
-    language: "Python",
-    category: "ML & Security",
-    date: "Sep 2026",
-    href: gh("phishguard"),
-    featured: true,
-  },
-  {
-    name: "EcoTracker",
-    description: "Cloud-based carbon footprint tracker with forecasting, ranked reduction advice and AI bill scanning.",
-    language: "JavaScript",
-    category: "Web Apps",
-    date: "Jul 2026",
-    href: gh("EcoTracker"),
-    live: "https://ecotrk.web.app/",
-    featured: true,
-  },
-  {
-    name: "fitadapt-ai",
-    description: "Interactive front end for a multi-agent system that adapts an athlete's training session to their daily biometric state.",
-    language: "JavaScript",
-    category: "Web Apps",
-    date: "Aug 2026",
-    href: gh("fitadapt-ai"),
-    live: "https://fitadapt-ai.vercel.app/",
-    featured: true,
-  },
-  {
-    name: "fake-news-detection-nlp",
-    description: "Fake news classification with NLP and machine learning — TF-IDF pipeline, four classifiers, Flask dashboard.",
-    language: "Python",
-    category: "ML & Security",
-    date: "Aug 2026",
-    href: gh("fake-news-detection-nlp"),
-    live: "https://fake-news-detection-nlp.vercel.app/",
-    featured: true,
-  },
-  {
-    name: "iot-environment-monitor",
-    description: "ESP32 firmware and a Python simulator publishing sensor data to ThingSpeak, with analysis and threshold alerting.",
-    language: "Python",
-    category: "Mobile & IoT",
-    date: "Aug 2026",
-    href: gh("iot-environment-monitor"),
-    featured: true,
-  },
-  {
-    name: "collabcanvas",
-    description: "Real-time collaborative whiteboard — live cursors, presence and persistent history over Socket.IO and MongoDB, on a hand-rolled canvas engine.",
-    language: "JavaScript",
-    category: "Web Apps",
-    date: "Aug 2026",
-    href: gh("collabcanvas"),
-  },
-  {
-    name: "campus-connect",
-    description: "Full-stack MERN club and event platform with JWT auth, three-tier role-based access and one-click RSVPs.",
-    language: "JavaScript",
-    category: "Web Apps",
-    date: "Aug 2026",
-    href: gh("campus-connect"),
-  },
-  {
-    name: "expense-tracker-android",
-    description: "Native Android expense tracker — Kotlin, Jetpack Compose, Room and MVVM, with budgets and category breakdowns.",
-    language: "Kotlin",
-    category: "Mobile & IoT",
-    date: "Aug 2026",
-    href: gh("expense-tracker-android"),
-  },
-  {
-    name: "finance-analyzer-cli",
-    description: "Python CLI that turns a transactions CSV into category breakdowns, monthly trends and charts.",
-    language: "Python",
-    category: "Systems & Tools",
-    date: "Aug 2026",
-    href: gh("finance-analyzer-cli"),
-  },
-  {
-    name: "library-management-system",
-    description: "Java console app on JDBC and SQLite: issue/return workflow, due dates and automatic overdue fines.",
-    language: "Java",
-    category: "Systems & Tools",
-    date: "Aug 2026",
-    href: gh("library-management-system"),
-  },
-  {
-    name: "hogrider",
-    description: "Clash Royale deck builder and analyzer — live elixir curve, matchup checks and decks shareable by URL.",
-    language: "JavaScript",
-    category: "Web Apps",
-    date: "May 2026",
-    href: gh("hogrider"),
-    live: "https://h0gr1d3r-code.github.io/hogrider/",
-  },
-  {
-    name: "H0GR1D3R-CODE.github.io",
-    description: "This site — React 19, GSAP, Three.js and Tailwind v4, deployed to GitHub Pages.",
-    language: "TypeScript",
-    category: "Web Apps",
-    date: "Aug 2026",
-    href: "https://github.com/H0GR1D3R-CODE/H0GR1D3R-CODE.github.io",
-  },
-];
-
-export type SkillGroup = {
-  label: string;
-  items: string[];
-};
-
-export const skills: SkillGroup[] = [
-  {
-    label: "Languages",
-    items: ["Python", "Java", "C", "C++", "C# (.NET)", "JavaScript", "Kotlin", "SQL", "PL/SQL", "HTML5", "CSS3", "JSP"],
-  },
-  {
-    label: "Frameworks & Libraries",
-    items: ["React", "Flask", "Node.js", "scikit-learn", "NLTK", "pandas", "Chart.js"],
-  },
-  {
-    label: "Databases & Cloud",
-    items: ["Firebase (Firestore, Auth, Hosting)", "MongoDB", "MySQL", "Oracle Database", "Vercel"],
-  },
-  {
-    label: "Tools",
-    items: ["Git", "GitHub", "Android Studio", "UiPath (RPA)", "Arduino", "Tinkercad", "MySQL Workbench"],
-  },
-  {
-    label: "Domains",
-    items: [
-      "Full-Stack Development",
-      "Machine Learning & NLP",
-      "IoT",
-      "Cybersecurity",
-      "Mobile Development",
-      "Automation",
-    ],
+    institution: "St. Mary's Catholic High School, Fujairah, UAE",
+    credential: "Class X",
+    result: "89.33%",
+    start: "Apr 2010",
+    end: "Apr 2022",
   },
 ];
 
@@ -435,11 +391,7 @@ export const certifications: Certification[] = [
     issuer: "Infosys Springboard",
     date: "Jul 2024 – Jan 2026",
   },
-  {
-    name: "CPCG Career Development Bootcamp",
-    issuer: "CHRIST University",
-    date: "Jun 2025 – Mar 2026",
-  },
+  { name: "CPCG Career Development Bootcamp", issuer: "CHRIST University", date: "Jun 2025 – Mar 2026" },
 ];
 
 export type Leadership = {
@@ -452,7 +404,7 @@ export type Leadership = {
 
 export const leadership: Leadership[] = [
   {
-    org: "Student Welfare Office (SWO), CHRIST University, Bengaluru",
+    org: "Student Welfare Office (SWO), CHRIST University",
     role: "Creatives Volunteer & Choir Member",
     start: "Aug 2024",
     end: "Mar 2026",
@@ -462,20 +414,18 @@ export const leadership: Leadership[] = [
     ],
   },
   {
-    org: "SDG Cell & Association of Christian Christites (ACC), Bengaluru",
+    org: "SDG Cell & Association of Christian Christites (ACC)",
     role: "Sustainability Volunteer & Choir Member",
     start: "Jul 2024",
     end: "Mar 2026",
-    bullets: [
-      "Organized 5+ awareness programs on sustainability and green building, reaching 500+ students.",
-    ],
+    bullets: ["Organized 5+ awareness programs on sustainability and green building, reaching 500+ students."],
   },
 ];
 
 export type Award = {
   title: string;
   issuer: string;
-  description: string;
+  note?: string;
   date: string;
 };
 
@@ -483,73 +433,87 @@ export const awards: Award[] = [
   {
     title: "Double Certificate of Honour",
     issuer: "SWO, CHRIST University",
-    description: "Recognized for project management and leadership across major institutional events.",
+    note: "For project management and leadership.",
     date: "Mar 2026",
   },
-  {
-    title: "Co-Curricular Scholarship",
-    issuer: "CHRIST University",
-    description: "Awarded for participation in extracurricular programs.",
-    date: "2025 – 2026",
-  },
-  {
-    title: "Certificate of Honour (Choral Excellence)",
-    issuer: "University Choir, SWO",
-    description: "Awarded for choral excellence with the university choir.",
-    date: "Mar 2026",
-  },
+  { title: "Certificate of Honour (Choral Excellence)", issuer: "University Choir, SWO", date: "Mar 2026" },
+  { title: "Co-Curricular Scholarship", issuer: "CHRIST University", date: "2025 – 2026" },
 ];
 
-export type EducationItem = {
-  institution: string;
-  credential: string;
-  metricLabel: string;
-  metricValue: number; // numeric for count-up animation
-  metricSuffix: string;
-  start: string;
-  end: string;
+// ── Timeline (derived: one list, newest first) ───────────────────────────
+
+export type TimelineKind = "Work" | "Education" | "Certificate" | "Leadership" | "Award";
+
+export type TimelineEntry = {
+  kind: TimelineKind;
+  title: string;
+  org: string;
+  date: string;
+  detail?: string;
+  bullets?: string[];
+  /** Work and education carry the weight; the rest render as single lines. */
+  major: boolean;
+  ongoing: boolean;
+  year: number;
+  sort: number;
 };
 
-export const education: EducationItem[] = [
-  {
-    institution: "CHRIST (Deemed to be University), Bengaluru",
-    credential: "Bachelor of Computer Applications (Hons.)",
-    metricLabel: "CGPA",
-    metricValue: 8.22,
-    metricSuffix: "",
-    start: "Jul 2024",
-    end: "May 2027 (Expected)",
-  },
-  {
-    institution: "Christ Academy Junior College (CBSE), Bengaluru, India",
-    credential: "Class XII",
-    metricLabel: "Score",
-    metricValue: 81.8,
-    metricSuffix: "%",
-    start: "Jun 2022",
-    end: "Apr 2024",
-  },
-  {
-    institution: "St. Mary's Catholic High School, Fujairah, UAE",
-    credential: "Class X",
-    metricLabel: "Score",
-    metricValue: 89.33,
-    metricSuffix: "%",
-    start: "Apr 2010",
-    end: "Apr 2022",
-  },
-];
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
-export const navSections = [
-  { id: "about", label: "About" },
-  { id: "approach", label: "Approach" },
-  { id: "experience", label: "Experience" },
-  { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
-  { id: "certifications", label: "Certs" },
-  { id: "opensource", label: "Open Source" },
-  { id: "leadership", label: "Leadership" },
-  { id: "awards", label: "Awards" },
-  { id: "education", label: "Education" },
-  { id: "contact", label: "Contact" },
-] as const;
+/** Reads the last "Mon YYYY" or bare "YYYY" out of a résumé date string, so entries sort by when they ended. */
+function endOf(date: string): { year: number; sort: number } {
+  const all = [...date.matchAll(/(?:([A-Za-z]{3})[a-z]*\s+)?(\d{4})/g)];
+  const last = all[all.length - 1];
+  if (!last) return { year: 0, sort: 0 };
+  const year = Number(last[2]);
+  const month = last[1] ? MONTHS.indexOf(last[1].toLowerCase()) + 1 : 0;
+  return { year, sort: year * 100 + month };
+}
+
+const KIND_ORDER: TimelineKind[] = ["Work", "Education", "Award", "Certificate", "Leadership"];
+
+function entry(e: Omit<TimelineEntry, "year" | "sort" | "ongoing">): TimelineEntry {
+  return { ...e, ...endOf(e.date), ongoing: /expected|present/i.test(e.date) };
+}
+
+export const timeline: TimelineEntry[] = [
+  ...experience.map((x) =>
+    entry({
+      kind: "Work",
+      title: x.role,
+      org: `${x.org}, ${x.location}`,
+      date: `${x.start} – ${x.end}`,
+      bullets: x.bullets,
+      major: true,
+    })
+  ),
+  ...education.map((x) =>
+    entry({
+      kind: "Education",
+      title: x.credential,
+      org: x.institution,
+      date: `${x.start} – ${x.end}`,
+      detail: x.result,
+      major: true,
+    })
+  ),
+  ...certifications.map((x) => entry({ kind: "Certificate", title: x.name, org: x.issuer, date: x.date, major: false })),
+  ...leadership.map((x) =>
+    entry({
+      kind: "Leadership",
+      title: x.role,
+      org: x.org,
+      date: `${x.start} – ${x.end}`,
+      bullets: x.bullets,
+      major: false,
+    })
+  ),
+  ...awards.map((x) =>
+    entry({ kind: "Award", title: x.title, org: x.issuer, date: x.date, detail: x.note, major: false })
+  ),
+].sort(
+  (a, b) =>
+    Number(b.ongoing) - Number(a.ongoing) ||
+    b.sort - a.sort ||
+    KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)
+);

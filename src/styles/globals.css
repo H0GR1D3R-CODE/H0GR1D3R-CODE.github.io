@@ -1,398 +1,719 @@
 @import "tailwindcss";
-@import "@fontsource-variable/fraunces";
-@import "@fontsource-variable/manrope";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/overpass/wght.css";
+@import "@fontsource-variable/overpass-mono/wght.css";
+@import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
 
-@theme {
-  --color-ink: #08080a;
-  --color-ink-2: #0e0e12;
-  --color-ink-3: #16161c;
-  --color-bone: #f4f1ea;
-  --color-muted: #f4f1ea94;
-  --color-gold: #c8a24c;
-  --color-gold-lite: #e8d08a;
-  --color-gold-dim: #c8a24c40;
+/* ─────────────────────────────────────────────────────────────────────────
+   Two themes, one world: a panda in a straw hat in the snow.
+   "Snow day" is the default. "Snowy night" is the same scene after dark,
+   using the palette of the GitHub profile README banner.
+   Straw is the only warm colour in either theme.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
 
-  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
-  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --bg: #f6fafc; /* snow */
+  --bg-2: #e9f1f6; /* ice, for alternating bands */
+  --card: #ffffff;
+  --line: #c9ddea; /* decorative dividers */
+  --edge: #5e7c93; /* control borders: 3:1 or better on every ground */
+  --ink: #0b1622; /* ink navy */
+  --ink-2: #3b556b;
+  --straw: #e0b15a;
+  --straw-soft: #ecc273;
+  --on-straw: #0b1622;
+  --focus: #1f6fa8;
 
-  --breakpoint-xs: 22rem;
+  --sky-top: #d3e4ef;
+  --sky-bottom: #f6fafc;
+  --ridge-far: #c4d9e7;
+  --ridge-near: #dce9f2;
+  --pine: #9fbdd0;
+  --flake: #8fb3cb;
+  --ghost: #dbe8f1; /* the giant scrolling phrase: scenery, not text */
+  --drift-top: #ffffff;
+  --drift-bottom: #dfebf3;
+
+  --map-ground: #e3edf4;
+  --map-water: #c5dcea;
+  --map-road: #5e7c93;
+  --map-route: #e0b15a;
+  --map-route-case: #0b1622;
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+
+  --bg: #0b1622;
+  --bg-2: #0f1e2e;
+  --card: #13263a;
+  --line: #24405a;
+  --edge: #6f97b4;
+  --ink: #eef4f8;
+  --ink-2: #b7d5e6;
+  --straw: #e0b15a;
+  --straw-soft: #ecc273;
+  --on-straw: #0b1622;
+  --focus: #ecc273;
+
+  --sky-top: #0b1622;
+  --sky-bottom: #13263a;
+  --ridge-far: #162b40;
+  --ridge-near: #1d3349;
+  --pine: #0d1d2c;
+  --flake: #eef4f8;
+  --ghost: #15293d;
+  --drift-top: #eef4f8;
+  --drift-bottom: #c9ddea;
+
+  --map-ground: #112234;
+  --map-water: #1b3a55;
+  --map-road: #6f97b4;
+  --map-route: #ecc273;
+  --map-route-case: #0b1622;
+}
+
+@custom-variant night (&:where([data-theme="night"], [data-theme="night"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-edge: var(--edge);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-straw: var(--straw);
+  --color-straw-soft: var(--straw-soft);
+  --color-on-straw: var(--on-straw);
+  --color-focus: var(--focus);
+
+  /* Overpass descends from highway-sign lettering: headlines and controls.
+     Atkinson Hyperlegible is built for fast, unambiguous reading: body copy.
+     Overpass Mono is reserved for real data: minutes, dates, results. */
+  --font-display: "Overpass Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Atkinson Hyperlegible Next Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Overpass Mono Variable", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 @layer base {
-  * {
-    @apply border-gold-dim;
+  html {
+    background-color: var(--bg);
+    scroll-padding-top: 5rem;
   }
 
-  html {
-    background-color: var(--color-ink);
-    color-scheme: dark;
-    scrollbar-color: var(--color-gold-dim) var(--color-ink);
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
-    @apply bg-ink text-bone font-sans antialiased;
+    @apply bg-bg text-ink font-sans antialiased;
     min-height: 100svh;
+    font-size: 1.0625rem;
+    line-height: 1.6;
     overflow-x: clip;
   }
 
-  ::selection {
-    background: var(--color-gold);
-    color: var(--color-ink);
+  main {
+    overflow-x: clip;
   }
 
-  :focus-visible {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 3px;
-  }
-
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     @apply font-display;
     text-wrap: balance;
   }
-}
 
-@layer utilities {
-  .text-eyebrow {
-    @apply font-mono uppercase tracking-[0.28em] text-xs text-gold;
+  p,
+  li {
+    text-wrap: pretty;
   }
 
-  .clip-lines {
-    overflow: clip;
+  ::selection {
+    background: var(--straw);
+    color: var(--on-straw);
   }
 
-  .gold-sheen {
-    background: linear-gradient(
-      100deg,
-      var(--color-bone) 20%,
-      var(--color-gold-lite) 45%,
-      var(--color-gold) 55%,
-      var(--color-bone) 80%
-    );
-    background-size: 250% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
   }
 
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  a,
+  button,
+  select {
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      text-decoration-color 0.15s ease;
   }
 }
 
-/* Film grain + vignette, fixed above everything, never blocks interaction */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-}
-
-.vignette-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 89;
-  pointer-events: none;
-  background: radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
-}
-
-/* Cursor-tracked ambient light, driven by --mx/--my custom props */
-.cursor-light {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(
-    600px circle at var(--mx, 50%) var(--my, 50%),
-    var(--color-gold-dim),
-    transparent 70%
-  );
-  opacity: 0.5;
-  transition: opacity 0.4s ease;
-}
-
-/* Infinite marquee track — Marquee.tsx duplicates its content once, this just slides it left. */
-@keyframes marquee {
-  from {
-    transform: translateX(0);
+@layer components {
+  /* Inline links: ink text, straw underline. The underline carries the accent so the text itself stays AA. */
+  .link {
+    text-decoration: underline;
+    text-decoration-color: var(--straw);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.22em;
   }
-  to {
-    transform: translateX(-50%);
+  .link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* A straw marker stroke under a phrase: used once, in the headline. */
+  .marker {
+    background-image: linear-gradient(var(--straw), var(--straw));
+    background-repeat: no-repeat;
+    background-size: 100% 0.2em;
+    background-position: 0 92%;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-200%);
+    @apply rounded-full bg-ink px-5 py-3 font-display text-sm font-bold text-bg;
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+
+  /* Buttons lift a little under the pointer and settle when pressed. */
+  .press {
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      translate 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.2s ease;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .press:hover {
+      translate: 0 -2px;
+      box-shadow: 0 6px 14px -8px rgb(11 22 34 / 0.55);
+    }
+    .press:active {
+      translate: 0 0;
+      box-shadow: none;
+    }
   }
 }
 
-/* Pointer-tilt cards (useTilt) — a soft gold gloss follows the cursor via --glow-x/--glow-y. */
-.tilt-card {
-  will-change: transform;
+/* ── Header ─────────────────────────────────────────────────────────────── */
+/* Clear over the hero sky, then frosts over once the page starts to move. */
+.site-header {
+  background-color: color-mix(in srgb, var(--bg) 85%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+@supports (animation-timeline: scroll()) {
+  .site-header {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: none;
+    animation: header-frost linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 6rem;
+  }
+  @keyframes header-frost {
+    to {
+      background-color: color-mix(in srgb, var(--bg) 85%, transparent);
+      border-bottom-color: var(--line);
+      backdrop-filter: blur(12px);
+    }
+  }
 }
 
-.tilt-card-glow {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
+/* ── Route map ──────────────────────────────────────────────────────────── */
+.route-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.route-map [role="button"] {
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The keyboard hint only appears once someone is driving the map with a keyboard. */
+.route-panel .keyboard-hint {
+  display: none;
+}
+.route-panel:has(.route-map :focus-visible) .keyboard-hint {
+  display: inline;
+}
+
+/* SVG ignores CSS outlines unevenly across browsers, so focus is drawn as a real shape. */
+.route-map .focus-ring {
   opacity: 0;
-  background: radial-gradient(
-    360px circle at var(--glow-x, 50%) var(--glow-y, 50%),
-    rgba(232, 208, 138, 0.14),
-    transparent 70%
-  );
-  transition: opacity 0.35s ease;
 }
-
-.tilt-card:hover .tilt-card-glow {
+.route-map [role="button"]:focus-visible .focus-ring {
   opacity: 1;
 }
 
-.tilt-card > :not(.tilt-card-glow) {
-  position: relative;
-  z-index: 1;
+.route-map .road-line {
+  stroke: var(--map-road);
+  transition: stroke 0.15s ease;
+}
+.route-map .road:hover .road-line,
+.route-map .road:focus-visible .road-line {
+  stroke: var(--ink);
 }
 
-/* Custom cursor (CustomCursor.tsx) — native cursor is only hidden once the component confirms a fine pointer. */
-html.custom-cursor-active,
-html.custom-cursor-active * {
-  cursor: none !important;
+.route-map .place:hover .place-dot {
+  fill: var(--map-route);
 }
 
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 999px;
-  background: var(--color-gold);
-  pointer-events: none;
+/* Hidden unless motion is welcome; the keyframes below bring it to life. */
+.route-map .ripple {
+  opacity: 0;
 }
 
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99;
-  width: 36px;
-  height: 36px;
-  margin: -18px 0 0 -18px;
-  border-radius: 999px;
-  border: 1px solid var(--color-gold-dim);
-  pointer-events: none;
-  transition: width 0.25s ease, height 0.25s ease, margin 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
-}
-
-.cursor-ring--active {
-  width: 56px;
-  height: 56px;
-  margin: -28px 0 0 -28px;
-  border-color: var(--color-gold);
-  background: rgba(200, 162, 76, 0.08);
-}
-
-/* Terminal.tsx input caret */
-.terminal-caret::placeholder {
-  color: var(--color-muted);
-}
-
-/* About.tsx editorial opening paragraph */
-.dropcap::first-letter {
+.route-map .map-label {
   font-family: var(--font-display);
-  font-size: 3.2em;
-  line-height: 0.78;
-  float: left;
-  padding-right: 0.09em;
-  padding-top: 0.03em;
-  color: var(--color-gold);
+  fill: var(--ink);
+  stroke: var(--map-ground);
+  paint-order: stroke;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+/* A place can be picked by its name as well as its dot. */
+.route-map .place .map-label {
+  pointer-events: auto;
 }
 
-/* About.tsx EQ-style language bars — a slow idle breathe, like a live meter at rest. */
-.signal-eq {
-  animation: signal-eq 3.6s ease-in-out infinite;
-  animation-delay: var(--eq-delay, 0s);
+/* ── Timeline ───────────────────────────────────────────────────────────── */
+/* One line runs the height of the timeline. A straw hat rides it at the
+   middle of the screen, and everything above the hat has been travelled.
+   This is plain sticky positioning: no script, nothing to fall out of sync. */
+.timeline {
+  --track-x: 0.5rem;
 }
-@keyframes signal-eq {
-  0%, 100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.18);
-  }
-}
-
-/* Approach.tsx stage connectors — a pulse traveling from one stage to the next. */
-.signal-pulse {
-  animation: signal-pulse 2.4s ease-in-out infinite;
-}
-@keyframes signal-pulse {
-  0% {
-    left: 0%;
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    left: 100%;
-    opacity: 0;
+@media (min-width: 48rem) {
+  .timeline {
+    --track-x: 9.5rem;
   }
 }
-
-/* Projects.tsx readout panels — a faint CRT scanline texture over the card. */
-.scanlines {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(244, 241, 234, 0.028) 0px,
-    rgba(244, 241, 234, 0.028) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+.timeline-track {
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0;
+  left: var(--track-x);
+  width: 2px;
+  margin-left: -1px;
+  background: var(--line);
+  overflow-x: visible;
+  overflow-y: clip;
+}
+.timeline-rider {
+  position: sticky;
+  top: 50svh;
+  height: 0;
+}
+.timeline-travelled {
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  width: 4px;
+  height: 20000px;
+  border-radius: 2px;
+  background: var(--straw);
 }
 
-/* App.tsx skip-to-content link — invisible until it receives keyboard focus. */
-.skip-link {
-  position: fixed;
-  top: -100%;
-  left: 1rem;
-  z-index: 200;
-  padding: 0.75rem 1.25rem;
-  background: var(--color-gold);
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
+/* ── Scenery ────────────────────────────────────────────────────────────── */
+.sled-scene {
+  view-timeline-name: --scene;
+  view-timeline-axis: block;
+}
+
+.ghost-phrase {
+  color: var(--ghost);
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  border-radius: 0.5rem;
-  transition: top 0.2s ease;
-}
-.skip-link:focus {
-  top: 1rem;
 }
 
-/* CommandPalette.tsx */
-.command-palette-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 150;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 12vh 1.5rem 1.5rem;
-  background: rgba(8, 8, 10, 0.7);
-  backdrop-filter: blur(4px);
+/* Without scroll-driven animation support the sled simply waits partway down the hill. */
+.sled {
+  offset-rotate: auto;
+  offset-distance: 38%;
+}
+.sled-track {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0.62;
 }
 
-.command-palette {
-  width: 100%;
-  max-width: 36rem;
-  border-radius: 1rem;
-  border: 1px solid var(--color-gold-dim);
-  background: var(--color-ink-2);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
-  overflow: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+/* The panda's eyes follow the pointer: PandaScene.tsx sets --look-x / --look-y. */
+.panda-look {
+  transform: translate(calc(var(--look-x, 0) * 1px), calc(var(--look-y, 0) * 1px));
+  transition: transform 0.18s ease-out;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Print / "save as résumé" mode. The live site is an experience; a printout
-   needs to be a document — legible, monochrome-safe, and free of anything
-   that only makes sense on a screen a recruiter is scrolling.
+   Motion. Everything below is opt-in: visitors who ask for reduced motion
+   get the finished page, standing still.
    ───────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  /* ── Arrival: the headline rises word by word, then the marker is drawn under it. */
+  .word {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: bottom;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+  .word > span {
+    display: inline-block;
+    transform: translateY(110%);
+    animation: word-up 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+  }
+  @keyframes word-up {
+    to {
+      transform: none;
+    }
+  }
+
+  .arrive .marker {
+    background-size: 0% 0.2em;
+    animation: marker-draw 0.7s cubic-bezier(0.6, 0, 0.2, 1) 0.8s forwards;
+  }
+  @keyframes marker-draw {
+    to {
+      background-size: 100% 0.2em;
+    }
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    animation: fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes fade-up {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ── The map spreads outwards from Yeshwanthpur as it loads. */
+  .route-map .map-reveal {
+    animation: map-reveal 1.3s cubic-bezier(0.3, 0, 0.2, 1) 0.25s backwards;
+  }
+  @keyframes map-reveal {
+    from {
+      r: 0;
+    }
+  }
+
+  /* The search ripples outwards place by place, then the route draws itself. */
+  .route-map .ripple {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ripple 0.6s ease-out both;
+  }
+  @keyframes ripple {
+    from {
+      opacity: 0.55;
+      transform: scale(0.3);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+
+  .route-map .route-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: route-draw 0.55s ease-out forwards;
+  }
+  @keyframes route-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .panda-blink {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: panda-blink 5s linear 2s infinite;
+  }
+  @keyframes panda-blink {
+    0%,
+    92%,
+    96%,
+    100% {
+      transform: scaleY(1);
+    }
+    94% {
+      transform: scaleY(0.1);
+    }
+  }
+
+  .snow-fall {
+    animation: snow-fall linear infinite;
+  }
+  @keyframes snow-fall {
+    to {
+      transform: translate(var(--drift, 0), 540px);
+    }
+  }
+
+  .twinkle {
+    animation: twinkle ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from {
+      opacity: 0.1;
+    }
+  }
+
+  /* ── Scroll-linked motion. These are tied to scroll position, not time, so
+        they run forwards and backwards with the page and never play on their
+        own. Browsers without scroll-driven animations skip this block and
+        show the content in place. */
+  @supports (animation-timeline: view()) {
+    /* Content rises into place as it enters. --i staggers neighbours. */
+    .rise {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 8%) cover calc(24% + var(--i, 0) * 8%);
+    }
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(3.5rem);
+      }
+    }
+
+    /* A screenshot tips up from the ground like a screen being opened. */
+    .lift {
+      transform-origin: 50% 100%;
+      animation: lift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+    @keyframes lift {
+      from {
+        opacity: 0.3;
+        transform: perspective(1400px) rotateX(18deg) scale(0.86);
+      }
+    }
+
+    .slide-from-left,
+    .slide-from-right {
+      animation: slide-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 34%;
+    }
+    .slide-from-left {
+      --from: -2.5rem;
+    }
+    .slide-from-right {
+      --from: 2.5rem;
+    }
+    @media (min-width: 64rem) {
+      .slide-from-left {
+        --from: -5rem;
+      }
+      .slide-from-right {
+        --from: 5rem;
+      }
+    }
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateX(var(--from));
+      }
+    }
+
+    /* Two columns of cards travel at slightly different speeds. */
+    @media (min-width: 40rem) {
+      .drift-slow,
+      .drift-fast {
+        animation: drift linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+      .drift-slow {
+        --travel: 1.25rem;
+      }
+      .drift-fast {
+        --travel: 3.5rem;
+      }
+      @keyframes drift {
+        from {
+          transform: translateY(var(--travel));
+        }
+        to {
+          transform: translateY(calc(var(--travel) * -1));
+        }
+      }
+    }
+
+    /* Hero scenery sinks slowly behind the content as the page leaves the top. */
+    .parallax-far,
+    .parallax-near,
+    .hero-sink {
+      animation: sink linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100svh;
+    }
+    .parallax-far {
+      --sink: 9rem;
+    }
+    .parallax-near {
+      --sink: 4.5rem;
+    }
+    .hero-sink {
+      --sink: 3rem;
+    }
+    @keyframes sink {
+      to {
+        transform: translateY(var(--sink));
+      }
+    }
+
+    /* The sled rides its hill for exactly as long as the scene is on screen. */
+    .sled {
+      animation: sled-run linear both;
+      animation-timeline: --scene;
+      animation-range: cover 12% cover 88%;
+    }
+    @keyframes sled-run {
+      from {
+        offset-distance: 0%;
+      }
+      to {
+        offset-distance: 100%;
+      }
+    }
+    .sled-track {
+      animation: sled-track linear both;
+      animation-timeline: --scene;
+      animation-range: cover 12% cover 88%;
+    }
+    @keyframes sled-track {
+      from {
+        stroke-dashoffset: 1;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    .hero-scene .sled,
+    .hero-scene .sled-track {
+      animation-range: exit -25% exit 85%;
+    }
+
+    .ghost-phrase {
+      animation: ghost-slide linear both;
+      animation-timeline: --scene;
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes ghost-slide {
+      from {
+        transform: translateX(12%);
+      }
+      to {
+        transform: translateX(-42%);
+      }
+    }
+
+    .scene-ridge {
+      animation: ridge-shift linear both;
+      animation-timeline: --scene;
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes ridge-shift {
+      from {
+        transform: translateY(1.75rem);
+      }
+      to {
+        transform: translateY(-0.5rem);
+      }
+    }
+
+    /* Timeline dots fill in as the hat passes them. */
+    .timeline-dot {
+      animation: dot-reached linear both;
+      animation-timeline: view();
+      animation-range: cover 46% cover 51%;
+    }
+    @keyframes dot-reached {
+      to {
+        background-color: var(--straw);
+        border-color: var(--map-route-case);
+        scale: 1.3;
+      }
+    }
+
+    /* The footer panda comes up over the drift as the page reaches the bottom. */
+    .peek-up {
+      animation: peek-up linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 130%;
+    }
+    @keyframes peek-up {
+      from {
+        transform: translateY(75%);
+      }
+    }
+  }
+
+  /* ── Theme switch: night falls (or day breaks) in a circle from the toggle. */
+  html.theme-switch::view-transition-old(root),
+  html.theme-switch::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  html.theme-switch::view-transition-new(root) {
+    animation: theme-reveal 0.75s cubic-bezier(0.5, 0, 0.2, 1);
+  }
+  @keyframes theme-reveal {
+    from {
+      clip-path: circle(0 at var(--switch-x, 50%) var(--switch-y, 0));
+    }
+    to {
+      clip-path: circle(150vmax at var(--switch-x, 50%) var(--switch-y, 0));
+    }
+  }
+
+  /* ── Filtering: projects glide to their new places instead of jumping. */
+  html.filtering .project {
+    view-transition-name: var(--vt);
+  }
+  ::view-transition-group(*) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
+  }
+}
+
 @media print {
-  /* Every purely decorative element on the site is already marked
-     aria-hidden="true" for screen readers — grain, vignette, cursor light/
-     dot/ring, background orbs, ghost numerals, tilt-card glows, signal
-     pulses, the signal spine, marquees, corner brackets, waveform
-     signatures, scanlines. One rule strips all of it at once. */
-  [aria-hidden="true"] {
-    display: none !important;
-  }
-
-  /* Real UI that has no meaning on paper. */
   header,
-  #hero canvas,
-  .command-palette-backdrop,
-  .skip-link,
-  .no-print,
-  footer a {
+  .no-print {
     display: none !important;
   }
-
-  html,
   body {
-    background: #fff !important;
-    color: #111 !important;
-  }
-
-  * {
-    box-shadow: none !important;
-    text-shadow: none !important;
-    backdrop-filter: none !important;
-    animation: none !important;
-    transform: none !important;
-  }
-
-  .gold-sheen {
-    -webkit-text-fill-color: #111 !important;
-    background: none !important;
-    color: #111 !important;
-  }
-
-  #main-content,
-  #main-content section,
-  .pin-spacer {
-    position: static !important;
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-    width: auto !important;
-    background: #fff !important;
-  }
-
-  #main-content section {
-    padding: 0.5rem 0 !important;
-    page-break-inside: avoid;
-    border: none !important;
-  }
-
-  #main-content [class*="border-gold"] {
-    border-color: #ccc !important;
-  }
-
-  h1, h2, h3, h4, p, span, a, li {
-    color: #111 !important;
-  }
-
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.75em;
-    color: #555 !important;
-  }
-  a[href^="#"]::after {
-    content: "";
-  }
-
-  #hero {
-    min-height: 0 !important;
-    padding-top: 0.5rem !important;
+    background: #fff;
+    color: #111;
   }
 }

@@ -1,78 +1,30 @@
-import { useRef, useState } from "react";
-import { useLenis } from "@/lib/useLenis";
-import { useScrollTriggerRefresh } from "@/lib/useScrollTriggerRefresh";
-import { useCommandPalette } from "@/lib/useCommandPalette";
-import { Preloader } from "./components/Preloader";
-import { Grain } from "./components/Grain";
-import { CursorLight } from "./components/CursorLight";
-import { CustomCursor } from "./components/CustomCursor";
-import { ScrollProgress } from "./components/ScrollProgress";
-import { CommandPalette } from "./components/CommandPalette";
-import { Nav } from "./components/Nav";
-import { SectionRail } from "./components/SectionRail";
-import { Hero } from "./components/hero/Hero";
-import { StatementBreak } from "./components/ui/StatementBreak";
-import { SignalSpine } from "./components/ui/SignalSpine";
-import {
-  About,
-  Metrics,
-  Approach,
-  Experience,
-  Projects,
-  Skills,
-  Certifications,
-  OpenSource,
-  Leadership,
-  Awards,
-  Education,
-  Contact,
-  Footer,
-} from "./components/sections";
+import { useTheme } from "@/lib/useTheme";
+import { Header } from "./components/Header";
+import { Hero } from "./components/Hero";
+import { Work } from "./components/Work";
+import { About } from "./components/About";
+import { Timeline } from "./components/Timeline";
+import { Contact, Footer } from "./components/Contact";
+import { SledRun } from "./components/Scenery";
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-  const pageRef = useRef<HTMLDivElement | null>(null);
-  const palette = useCommandPalette();
-  useLenis();
-  useScrollTriggerRefresh(ready);
+  const { theme, toggle } = useTheme();
 
   return (
     <>
-      <a href="#main-content" className="skip-link">
+      <a href="#main" className="skip-link">
         Skip to content
       </a>
-
-      <Preloader onDone={() => setReady(true)} />
-      <Grain />
-      <CursorLight />
-      <CustomCursor />
-      <ScrollProgress />
-      <CommandPalette open={palette.open} onClose={() => palette.setOpen(false)} />
-      <Nav onOpenPalette={() => palette.setOpen(true)} />
-      <SectionRail />
-
-      <div ref={pageRef} className="relative">
-        <SignalSpine containerRef={pageRef} />
-
-        <main id="main-content">
-          <Hero ready={ready} />
-          <About />
-          <Metrics />
-          <Approach />
-          <Experience />
-          <StatementBreak text="Three domains, one obsession: shipping things that actually work in the real world." />
-          <Projects />
-          <Skills />
-          <Certifications />
-          <OpenSource />
-          <Leadership />
-          <Awards />
-          <Education />
-          <Contact />
-        </main>
-
-        <Footer />
-      </div>
+      <Header theme={theme} onToggleTheme={toggle} />
+      <main id="main">
+        <Hero />
+        <Work />
+        <SledRun phrase="Past the tutorial stage" />
+        <About />
+        <Timeline />
+        <Contact />
+      </main>
+      <Footer />
     </>
   );
 }
