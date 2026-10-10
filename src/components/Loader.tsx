@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { liveProjects, ping, statusText, type LiveStatus } from "@/lib/livePing";
 import { profile } from "@/data/resume";
 import { cn } from "@/lib/cn";
-import { PandaMark } from "./Panda";
+import { Mark } from "./Logo";
 
 const SESSION_KEY = "booted";
 /** The screen stays at least this long, so it can be read rather than flashed. */
@@ -112,7 +112,7 @@ export function Loader({ onLift }: { onLift: () => void }) {
     <div className={cn("loader", lifting && "loader-lift")} role="status" aria-live="polite" data-theme="night">
       <div className="loader-inner">
         <p className="flex items-center gap-3 font-display text-2xl font-extrabold tracking-[-0.02em] sm:text-3xl">
-          <PandaMark className="h-9 w-auto" />
+          <Mark className="size-8" />
           {profile.name}
         </p>
         <p className="mt-2 text-ink-2">Checking that everything I say is running actually is.</p>

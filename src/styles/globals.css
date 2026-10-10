@@ -31,7 +31,6 @@
   --ridge-near: #dce9f2;
   --pine: #9fbdd0;
   --flake: #8fb3cb;
-  --ghost: #dbe8f1; /* the giant scrolling phrase: scenery, not text */
   --drift-top: #ffffff;
   --drift-bottom: #dfebf3;
 
@@ -63,7 +62,6 @@
   --ridge-near: #1d3349;
   --pine: #0d1d2c;
   --flake: #eef4f8;
-  --ghost: #15293d;
   --drift-top: #eef4f8;
   --drift-bottom: #c9ddea;
 
@@ -109,7 +107,7 @@ html {
 @layer base {
   html {
     background-color: var(--bg);
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 5.5rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -290,9 +288,8 @@ html.no-boot #boot {
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
-/* Over the hero the header wears the night palette and is clear. It frosts
-   over once the page moves, then takes on the page's own theme as the hero
-   scrolls out from under it. */
+/* A floating bar. Over the hero it wears the night palette; as the hero
+   scrolls out from under it, it takes on the page's own theme. */
 .site-header {
   --bg: #0b1622;
   --bg-2: #0f1e2e;
@@ -302,29 +299,56 @@ html.no-boot #boot {
   --ink-2: #b7d5e6;
   --focus: #ecc273;
   color: var(--ink);
-  background-color: color-mix(in srgb, var(--bg) 82%, transparent);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(12px);
+}
+.site-bar {
+  background-color: color-mix(in srgb, var(--bg) 80%, transparent);
+  border-color: var(--line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 12px 30px -20px rgb(0 0 0 / 0.5);
+}
+/* The straw line along the bottom edge: how far down the page you are. */
+.site-bar::after {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--straw);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+/* The highlight that slides to the section being read. */
+.nav-spot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2.5rem;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--ink) 11%, transparent);
+  pointer-events: none;
+  transition:
+    transform 0.45s cubic-bezier(0.3, 1.25, 0.5, 1),
+    width 0.45s cubic-bezier(0.3, 1.25, 0.5, 1),
+    opacity 0.2s ease;
+}
+.nav-spot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 1rem;
+  height: 2px;
+  margin-left: -0.5rem;
+  border-radius: 2px;
+  background: var(--straw);
 }
 @supports (animation-timeline: scroll()) and (timeline-scope: --x) {
   .site-header {
-    background-color: transparent;
-    border-bottom-color: transparent;
-    backdrop-filter: none;
-    animation:
-      header-frost linear both,
-      header-theme linear both;
-    animation-timeline: scroll(root), --hero;
-    animation-range:
-      0 6rem,
-      exit calc(100% - 5rem) exit calc(100% - 3.5rem);
-  }
-  @keyframes header-frost {
-    to {
-      background-color: color-mix(in srgb, var(--bg) 82%, transparent);
-      border-bottom-color: var(--line);
-      backdrop-filter: blur(12px);
-    }
+    animation: header-theme linear both;
+    animation-timeline: --hero;
+    animation-range: exit calc(100% - 5rem) exit calc(100% - 3.5rem);
   }
   @keyframes header-theme {
     to {
@@ -337,6 +361,31 @@ html.no-boot #boot {
       --focus: var(--page-focus);
     }
   }
+  .site-bar::after {
+    animation: page-progress linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes page-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* ── Code windows ───────────────────────────────────────────────────────── */
+/* Real source shown in place of a screenshot. Long lines fade out at the right. */
+.code-lines {
+  mask-image: linear-gradient(90deg, #000 86%, transparent);
+}
+.code-window .tok-comment {
+  color: #8fb3cb;
+}
+.code-window .tok-string {
+  color: #8ecae6;
+}
+.code-window .tok-keyword,
+.code-window .tok-note {
+  color: #ecc273;
 }
 
 /* ── Showcase deck ──────────────────────────────────────────────────────── */
@@ -392,42 +441,239 @@ html.no-boot #boot {
   transform-origin: left;
 }
 
-/* ── Timeline ───────────────────────────────────────────────────────────── */
-/* One line runs the height of the timeline. A straw hat rides it at the
-   middle of the screen, and everything above the hat has been travelled.
-   This is plain sticky positioning: no script, nothing to fall out of sync. */
-.timeline {
-  --track-x: 0.5rem;
+/* ── Timeline: the slalom course ────────────────────────────────────────── */
+/* Every entry is a gate. Rows are a grid with a lane for the trail: on a
+   phone the lane runs down the left; on a wide screen it runs down the
+   middle and the cards alternate either side. Timeline.tsx draws the trail
+   through the gates and moves the sled. */
+.course {
+  --lane: 4rem;
 }
-@media (min-width: 48rem) {
-  .timeline {
-    --track-x: 9.5rem;
-  }
+.gate-row,
+.course-year {
+  display: grid;
+  grid-template-columns: var(--lane) minmax(0, 1fr);
+  align-items: start;
 }
-.timeline-track {
-  position: absolute;
-  top: 0.5rem;
-  bottom: 0;
-  left: var(--track-x);
-  width: 2px;
-  margin-left: -1px;
-  background: var(--line);
-  overflow-x: visible;
-  overflow-y: clip;
-}
-.timeline-rider {
-  position: sticky;
-  top: 50svh;
+.gate,
+.year-anchor {
+  grid-column: 1;
+  grid-row: 1;
+  width: 0;
   height: 0;
 }
-.timeline-travelled {
+.gate {
+  position: relative;
+  margin-top: 1.6rem;
+}
+.gate-row[data-side="left"] .gate {
+  justify-self: start;
+  margin-left: 1rem;
+  --flag-at: -9px;
+  --flag-way: -1;
+}
+.gate-row[data-side="right"] .gate {
+  justify-self: end;
+  margin-right: 1.4rem;
+  --flag-at: 9px;
+  --flag-way: 1;
+}
+.year-anchor {
+  justify-self: center;
+  align-self: center;
+}
+.gate-card,
+.year-sign {
+  grid-column: 2;
+  grid-row: 1;
+}
+.gate-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card);
+  padding: 1.1rem 1.25rem 1.25rem;
+  transition:
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+.gate-row[data-reached] .gate-card {
+  border-color: var(--edge);
+  box-shadow: inset 3px 0 0 var(--straw);
+}
+.year-sign {
+  justify-self: start;
+  border: 1.5px solid var(--edge);
+  border-radius: 0.6rem;
+  background: var(--bg);
+  padding: 0.3rem 0.8rem 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease;
+}
+.course-year[data-reached] .year-sign {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* The flag stands just outside the bend, on the card's side of the trail. */
+.gate-flag {
   position: absolute;
-  bottom: 0;
-  left: -1px;
-  width: 4px;
-  height: 20000px;
-  border-radius: 2px;
+  bottom: -2px;
+  left: calc(var(--flag-at) - 3px);
+  color: var(--edge);
+  overflow: visible;
+  transform: scaleX(var(--flag-way));
+  transform-origin: 3px 50%;
+  transition: color 0.4s ease;
+}
+.gate-row[data-reached] .gate-flag {
+  color: var(--ink);
+}
+.gate-pennant {
+  transform-origin: 4px 50%;
+  transform: scaleX(0.16);
+  transition: transform 0.5s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+.gate-row[data-reached] .gate-pennant {
+  transform: scaleX(1);
+}
+
+.course-trail,
+.course-sled {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.course-base {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.course-done {
+  fill: none;
+  stroke: var(--straw);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 0 100000;
+}
+
+@media (min-width: 64rem) {
+  .course {
+    --lane: 13rem;
+  }
+  .gate-flag {
+    width: 30px;
+    height: 45px;
+  }
+  .gate-row,
+  .course-year {
+    grid-template-columns: minmax(0, 1fr) var(--lane) minmax(0, 1fr);
+  }
+  .gate,
+  .year-anchor,
+  .year-sign {
+    grid-column: 2;
+  }
+  .year-sign {
+    justify-self: center;
+  }
+  .gate-row[data-side="left"] .gate {
+    margin-left: 3.25rem;
+    --flag-at: -18px;
+  }
+  .gate-row[data-side="right"] .gate {
+    margin-right: 3.25rem;
+    --flag-at: 18px;
+  }
+  .gate-row[data-side="left"] .gate-card {
+    grid-column: 1;
+  }
+  .gate-row[data-side="right"] .gate-card {
+    grid-column: 3;
+  }
+  .gate-row[data-side="left"][data-reached] .gate-card {
+    box-shadow: inset -3px 0 0 var(--straw);
+  }
+}
+
+/* ── The sled game ──────────────────────────────────────────────────────── */
+.game-view {
+  touch-action: pan-y;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* A flag is a real button: 44px wide, standing on the snow at its pole. */
+.flag {
+  position: absolute;
+  width: 48px;
+  height: 72px;
+  padding: 2px 5px;
+  border-radius: 0.5rem;
+  transform: translate(-11px, -100%);
+  cursor: pointer;
+}
+/* Half-furled and pale until its project has been found; then it flies in straw. */
+.flag-pennant {
+  fill: var(--card);
+  transform-origin: 6px 50%;
+  transform: scaleX(0.5);
+  transition:
+    transform 0.5s cubic-bezier(0.3, 1.7, 0.5, 1),
+    fill 0.3s ease;
+}
+.flag:hover .flag-pennant {
+  transform: scaleX(0.8);
+}
+.flag[data-found] .flag-pennant {
+  fill: var(--straw);
+  transform: scaleX(1);
+}
+.flag[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 22px;
+  height: 9px;
+  border-radius: 50%;
   background: var(--straw);
+  opacity: 0.85;
+}
+
+/* ── The About figure ───────────────────────────────────────────────────── */
+/* The figure's performance is spread over a scroll timeline in slots: slot
+   --k starts at --s + --u * k. On a phone the timeline is the figure's own
+   passage up the screen; on a wide screen the figure is sticky, so the
+   timeline is the whole About section scrolling past it. */
+.about-scene {
+  --s: 28%;
+  --u: 7%;
+}
+.at-work {
+  view-timeline-name: --figure;
+  view-timeline-axis: block;
+}
+@media (min-width: 64rem) {
+  .about-scene {
+    view-timeline-name: --figure;
+    view-timeline-axis: block;
+    --s: 24%;
+    --u: 8%;
+  }
+  .at-work {
+    view-timeline-name: none;
+  }
 }
 
 /* ── Scenery ────────────────────────────────────────────────────────────── */
@@ -438,16 +684,6 @@ html.no-boot #boot {
 .hero-scene {
   view-timeline-name: --scene, --hero;
   view-timeline-axis: block;
-}
-
-.ghost-phrase {
-  color: var(--ghost);
-  font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 0.9;
-  white-space: nowrap;
-  text-transform: uppercase;
 }
 
 /* Without scroll-driven animation support the sled simply waits partway down the hill. */
@@ -552,6 +788,27 @@ html.no-boot #boot {
   @keyframes live-checking {
     to {
       opacity: 0.25;
+    }
+  }
+
+  /* The figure never quite sits still: its paws type and its work floats. */
+  .typing {
+    animation: typing 0.46s ease-in-out infinite alternate;
+  }
+  .typing-late {
+    animation-delay: -0.23s;
+  }
+  @keyframes typing {
+    to {
+      transform: translateY(2.5px);
+    }
+  }
+  .bob {
+    animation: bob 4.4s ease-in-out infinite alternate;
+  }
+  @keyframes bob {
+    to {
+      transform: translateY(-6px);
     }
   }
 
@@ -738,34 +995,6 @@ html.no-boot #boot {
       animation-range: exit -12% exit 78%;
     }
 
-    .ghost-phrase {
-      animation: ghost-slide linear both;
-      animation-timeline: --scene;
-      animation-range: cover 0% cover 100%;
-    }
-    @keyframes ghost-slide {
-      from {
-        transform: translateX(12%);
-      }
-      to {
-        transform: translateX(-42%);
-      }
-    }
-
-    .scene-ridge {
-      animation: ridge-shift linear both;
-      animation-timeline: --scene;
-      animation-range: cover 0% cover 100%;
-    }
-    @keyframes ridge-shift {
-      from {
-        transform: translateY(1.75rem);
-      }
-      to {
-        transform: translateY(-0.5rem);
-      }
-    }
-
     /* The About statement inks in a word at a time as it crosses the screen.
        Unread words stay at the control-border colour, which is still 3:1 or
        better on this ground: fine for text this size, and never invisible. */
@@ -784,17 +1013,63 @@ html.no-boot #boot {
       }
     }
 
-    /* Timeline dots fill in as the hat passes them. */
-    .timeline-dot {
-      animation: dot-reached linear both;
-      animation-timeline: view();
-      animation-range: cover 46% cover 51%;
+    /* The About figure: each element waits for its slot, then plays. */
+    .act {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --figure;
+      animation-range: cover calc(var(--s) + var(--u) * var(--k)) cover calc(var(--s) + var(--u) * (var(--k) + 1.25));
     }
-    @keyframes dot-reached {
-      to {
-        background-color: var(--straw);
-        border-color: #0b1622;
-        scale: 1.3;
+    .act-lid,
+    .act-flag {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    .act-lid {
+      animation-name: act-lid;
+    }
+    @keyframes act-lid {
+      from {
+        transform: scaleY(0.05);
+      }
+    }
+    .act-glow,
+    .act-lit {
+      animation-name: act-fade;
+    }
+    @keyframes act-fade {
+      from {
+        opacity: 0;
+      }
+    }
+    .act-chip {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation-name: act-chip;
+    }
+    @keyframes act-chip {
+      from {
+        opacity: 0;
+        transform: translate(var(--fx), var(--fy)) scale(0.15);
+      }
+    }
+    .act-flag {
+      animation-name: act-flag;
+    }
+    @keyframes act-flag {
+      from {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+    }
+    .act-nod {
+      transform-box: fill-box;
+      transform-origin: 50% 90%;
+      animation-name: act-nod;
+    }
+    @keyframes act-nod {
+      50% {
+        transform: rotate(-5deg) translateY(2px);
       }
     }
 
@@ -839,8 +1114,18 @@ html.no-boot #boot {
   }
 }
 
+/* With reduced motion, state changes (a flag going up, a highlight moving) simply happen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media print {
   header,
+  #sled,
   .loader,
   #boot,
   .no-print {

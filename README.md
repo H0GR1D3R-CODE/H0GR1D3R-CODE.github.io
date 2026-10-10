@@ -39,11 +39,19 @@ A project with a `live` URL and a `media` entry appears in the hero's deck autom
 - [`LiveBoard.tsx`](src/components/LiveBoard.tsx): the list of live demos with their reply times. Hovering a row brings its window forward.
 - [`livePing.ts`](src/lib/livePing.ts): the one-per-page-load ping they all share.
 
+## The rest of the page
+
+- [`Header.tsx`](src/components/Header.tsx): a floating bar. A highlight slides to the section being read and a straw line shows progress down the page. The mark in [`Logo.tsx`](src/components/Logo.tsx) is an N drawn as a route through four junctions.
+- [`SledGame.tsx`](src/components/SledGame.tsx): a small game between Work and About. Every flag on the hill is a project; steer the sled to one (arrow keys, the two buttons, or pick a flag) and it shows what is planted there. Each flag is a real button, so it works with a keyboard and a screen reader.
+- [`Panda.tsx`](src/components/Panda.tsx): `PandaAtWork` is the About figure. Its performance (laptop opens, mark lights up, Web / IoT / ML lift off, a flag goes in) is tied to scrolling through About.
+- [`Timeline.tsx`](src/components/Timeline.tsx): the timeline as a slalom run. The trail is laid through one gate per entry, and the sled is kept level with the middle of the screen as you scroll.
+- [`ProjectPicture.tsx`](src/components/ProjectPicture.tsx): projects without a screenshot show a `CodeWindow` instead: lines copied verbatim from one file in the repo (the `evidence` field in `resume.ts`), linked to the same lines on GitHub. If that file changes upstream, update the excerpt.
+
 ## Motion
 
 Scroll-linked motion uses CSS scroll-driven animations (`animation-timeline`), so it is tied to scroll position rather than time. Browsers without support show the same content in place. Wheel scrolling is eased with [Lenis](https://github.com/darkroomengineering/lenis); touch devices keep their native momentum.
 
-Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css). With reduced motion there is no loading screen, the page is complete and still, the deck waits to be clicked, and recordings wait for a Play button.
+Everything that moves is inside a `prefers-reduced-motion: no-preference` block in [`src/styles/globals.css`](src/styles/globals.css). With reduced motion there is no loading screen, the page is complete and still, the deck waits to be clicked, recordings wait for a Play button, the timeline is drawn with every flag up and no sled, and the game places the sled instead of sliding it.
 
 ## Build
 

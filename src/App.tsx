@@ -8,7 +8,7 @@ import { Work } from "./components/Work";
 import { About } from "./components/About";
 import { Timeline } from "./components/Timeline";
 import { Contact, Footer } from "./components/Contact";
-import { SledRun } from "./components/Scenery";
+import { SledGame } from "./components/SledGame";
 
 export default function App() {
   const { theme, toggle } = useTheme();
@@ -26,7 +26,7 @@ export default function App() {
       <main id="main">
         <Hero arrived={arrived} />
         <Work />
-        <SledRun phrase="Past the tutorial stage" />
+        <SledGame />
         <About />
         <Timeline />
         <Contact />

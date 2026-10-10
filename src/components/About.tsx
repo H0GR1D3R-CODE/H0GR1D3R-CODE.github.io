@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { about, skills, spokenLanguages } from "@/data/resume";
-import { PandaScene } from "./Panda";
+import { PandaAtWork } from "./Panda";
 
 /** "English and Malayalam (full professional), Hindi and Arabic (limited working), German (elementary)" */
 function spokenSummary() {
@@ -11,13 +11,16 @@ function spokenSummary() {
 
 export function About() {
   return (
-    <section id="about" aria-labelledby="about-title" className="bg-bg-2 py-16 sm:py-24">
+    <section id="about" aria-labelledby="about-title" className="about-scene bg-bg-2 py-16 sm:py-24">
       <div className="mx-auto grid max-w-[76rem] gap-x-14 gap-y-10 px-4 sm:px-8 lg:grid-cols-12">
-        <div className="slide-from-left lg:col-span-4">
-          <PandaScene className="aspect-[4/5] w-full max-w-[22rem] rounded-[1.75rem] border border-line" />
+        <div className="lg:col-span-5">
+          {/* Sticky on wide screens, so the figure keeps performing beside the text as it scrolls. */}
+          <div className="at-work mx-auto max-w-[27rem] lg:sticky lg:top-28">
+            <PandaAtWork className="w-full overflow-visible" />
+          </div>
         </div>
 
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-7">
           <h2 id="about-title" className="rise title">
             About
           </h2>
@@ -38,7 +41,7 @@ export function About() {
           </div>
 
           <h3 className="rise mt-12 font-display text-2xl font-extrabold tracking-[-0.015em]">Skills</h3>
-          <dl className="mt-5 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          <dl className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2">
             {skills.map((group, i) => (
               <div key={group.label} className="rise" style={{ "--i": i % 2 } as CSSProperties}>
                 <dt className="font-semibold">{group.label}</dt>

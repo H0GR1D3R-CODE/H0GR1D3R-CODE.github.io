@@ -78,7 +78,7 @@ export function Hero({ arrived }: { arrived: boolean }) {
       data-theme="night"
       aria-label="Introduction"
       className={cn(
-        "hero-scene relative isolate -mt-16 overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)] text-ink",
+        "hero-scene relative isolate -mt-[4.5rem] overflow-clip bg-linear-to-b from-(--sky-top) to-(--sky-bottom) pb-[clamp(5rem,9vw,7.5rem)] text-ink",
         arrived && "arrived"
       )}
     >

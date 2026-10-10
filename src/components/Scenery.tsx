@@ -91,39 +91,3 @@ export function HeroDrift() {
     </svg>
   );
 }
-
-const RUN_HILL = "M-90 96 C 110 70, 280 150, 470 128 S 700 96, 820 150 S 1080 196, 1290 150";
-
-/**
- * The scene between Work and About: a long downhill run under a line from
- * the GitHub profile, written large enough to be scenery. The phrase is
- * repeated as real text in the About section, so it is hidden here.
- */
-export function SledRun({ phrase }: { phrase: string }) {
-  return (
-    <div className="sled-scene relative overflow-clip bg-linear-to-b from-(--bg) to-(--sky-top)" aria-hidden="true">
-      <p className="ghost-phrase select-none pt-10 text-[clamp(4.5rem,17vw,15rem)] sm:pt-14">{phrase}</p>
-      <svg
-        viewBox="0 0 1200 240"
-        preserveAspectRatio="xMidYMax slice"
-        className="-mt-[clamp(2rem,7vw,6rem)] block h-[clamp(9rem,19vw,16rem)] w-full overflow-visible"
-        focusable="false"
-      >
-        <defs>
-          <HatGradient id="hat-run-sled" />
-        </defs>
-        <g className="scene-ridge">
-          <path d="M-40 120 C 140 70, 300 140, 500 96 S 800 40, 980 90 S 1150 120, 1240 80 V300 H-40 Z" fill="var(--ridge-far)" />
-          <g fill="var(--pine)">
-            <Pine x={150} y={44} scale={1.05} />
-            <Pine x={188} y={60} scale={0.75} />
-            <Pine x={612} y={30} scale={0.95} />
-            <Pine x={1010} y={36} scale={1.1} />
-            <Pine x={1052} y={54} scale={0.7} />
-          </g>
-        </g>
-        <Hill d={RUN_HILL} fill="var(--bg-2)" id="hat-run-sled" />
-      </svg>
-    </div>
-  );
-}

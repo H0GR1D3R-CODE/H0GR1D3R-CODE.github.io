@@ -5,6 +5,7 @@ import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
 import { ButtonLink } from "./Button";
 import { Pause, Play } from "./icons";
+import { ProjectPicture } from "./ProjectPicture";
 
 type Filter = Area | "All";
 
@@ -209,23 +210,19 @@ function Card({ project, column }: { project: Project; column: number }) {
   );
 }
 
-function Row({ project, i }: { project: Project; i: number }) {
+/** The smaller projects: a window onto the real code, then what it is. */
+function MiniCard({ project, i }: { project: Project; i: number }) {
   return (
-    <li
-      className="project rise grid gap-x-8 gap-y-2 py-6 md:grid-cols-[15rem_1fr_auto] md:items-start"
-      style={named(project, i % 3)}
-    >
+    <li className="project rise flex flex-col gap-3.5" style={named(project, i % 3)}>
+      <ProjectPicture project={project} />
+      <Meta project={project} />
       <div>
-        <h4 className="font-display text-lg font-extrabold">{project.name}</h4>
-        <p className="text-sm font-semibold text-ink-2">{project.areas.join(" + ")}</p>
+        <h4 className="font-display text-xl font-extrabold tracking-[-0.015em]">{project.name}</h4>
+        <p className="mt-0.5 text-ink-2">{project.tagline}</p>
       </div>
-      <div className="flex flex-col gap-2">
-        <p>{project.description}</p>
-        <Stack items={project.stack} />
-      </div>
-      <div className="mt-1 md:mt-0">
-        <Links project={project} size="sm" />
-      </div>
+      <p className="flex-1 text-[0.9375rem]">{project.description}</p>
+      <Stack items={project.stack} />
+      <Links project={project} size="sm" />
     </li>
   );
 }
@@ -266,8 +263,8 @@ export function Work() {
               Work
             </h2>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
-              {projects.length} projects. {liveCount} have a live demo you can open right now; the rest have their
-              code and a README that says how to run them.
+              {projects.length} projects. {liveCount} have a live demo you can open right now; the rest show their
+              code and link to a README that says how to run them.
             </p>
           </div>
 
@@ -324,9 +321,9 @@ export function Work() {
               <h3 className="rise font-display text-2xl font-extrabold tracking-[-0.015em]">
                 {more.length === visible.length ? "Projects" : "Also built"}
               </h3>
-              <ul className="mt-4 divide-y divide-line border-y border-line">
+              <ul className="mt-6 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                 {more.map((p, i) => (
-                  <Row key={p.id} project={p} i={i} />
+                  <MiniCard key={p.id} project={p} i={i} />
                 ))}
               </ul>
             </div>

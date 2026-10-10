@@ -67,6 +67,18 @@ export type ProjectMedia = {
   height: number;
 };
 
+/** Lines copied verbatim from one file in the project's repository. */
+export type ProjectEvidence = {
+  /** Path of the file inside the repository. */
+  path: string;
+  lang: "js" | "py" | "kt" | "java";
+  /** Line number of the first line in `code`. */
+  line: number;
+  /** Number of files in the repository. */
+  files: number;
+  code: string[];
+};
+
 export type Project = {
   id: string;
   name: string;
@@ -90,6 +102,8 @@ export type Project = {
   code: string;
   extra?: { label: string; href: string };
   media?: ProjectMedia;
+  /** For projects with no screenshot: a real excerpt of their source, shown as proof they exist. */
+  evidence?: ProjectEvidence;
 };
 
 const gh = (repo: string) => `https://github.com/H0GR1D3R-CODE/${repo}`;
@@ -243,6 +257,27 @@ export const projects: Project[] = [
     stack: ["React", "Socket.IO", "Node/Express", "MongoDB"],
     areas: ["Web"],
     code: gh("collabcanvas"),
+    evidence: {
+      path: "server/sockets/boardSocket.js",
+      lang: "js",
+      line: 43,
+      files: 38,
+      code: [
+        "    socket.on('draw-end', async (stroke) => {",
+        "      if (!currentBoardId) return;",
+        "      socket.to(currentBoardId).emit('draw-end', stroke);",
+        "",
+        "      try {",
+        "        await Stroke.create({",
+        "          boardId: currentBoardId,",
+        "          strokeId: stroke.strokeId,",
+        "          tool: stroke.tool,",
+        "          points: stroke.points,",
+        "          color: stroke.color,",
+        "          width: stroke.width,",
+        "          text: stroke.text,",
+      ],
+    },
   },
   {
     id: "campus-connect",
@@ -255,6 +290,27 @@ export const projects: Project[] = [
     stack: ["React", "Node/Express", "MongoDB", "JWT"],
     areas: ["Web"],
     code: gh("campus-connect"),
+    evidence: {
+      path: "server/middleware/auth.js",
+      lang: "js",
+      line: 18,
+      files: 54,
+      code: [
+        "  const decoded = jwt.verify(token, process.env.JWT_SECRET);",
+        "  const user = await User.findById(decoded.id);",
+        "",
+        "  if (!user) {",
+        "    throw new ApiError(401, 'Not authorized, user no longer exists');",
+        "  }",
+        "",
+        "  req.user = user;",
+        "  next();",
+        "});",
+        "",
+        "// Restricts a route to one or more roles, e.g. authorize('site_admin')",
+        "const authorize = (...roles) => (req, res, next) => {",
+      ],
+    },
   },
   {
     id: "iot-environment-monitor",
@@ -267,6 +323,27 @@ export const projects: Project[] = [
     stack: ["Arduino/C++", "Python", "ThingSpeak API", "pandas"],
     areas: ["IoT"],
     code: gh("iot-environment-monitor"),
+    evidence: {
+      path: "simulator/sensor_simulator.py",
+      lang: "py",
+      line: 60,
+      files: 18,
+      code: [
+        "    def generate_temperature(self, timestamp: datetime) -> float:",
+        "        \"\"\"Temperature peaks in mid-afternoon (~15:00) and troughs before dawn (~03:00).\"\"\"",
+        "        hour = self._hour_fraction(timestamp)",
+        "        signal = self.TEMPERATURE_AMPLITUDE_C * math.cos(",
+        "            2 * math.pi * (hour - 15) / 24",
+        "        )",
+        "        noise = self._rng.gauss(0, self.TEMPERATURE_NOISE_STD)",
+        "        return self.MEAN_TEMPERATURE_C + signal + noise",
+        "",
+        "    def generate_humidity(self, timestamp: datetime) -> float:",
+        "        \"\"\"Humidity roughly mirrors temperature: highest overnight, lowest mid-afternoon.\"\"\"",
+        "        hour = self._hour_fraction(timestamp)",
+        "        signal = self.HUMIDITY_AMPLITUDE_PCT * math.cos(",
+      ],
+    },
   },
   {
     id: "expense-tracker-android",
@@ -279,6 +356,27 @@ export const projects: Project[] = [
     stack: ["Kotlin", "Jetpack Compose", "Room", "MVVM"],
     areas: ["Mobile"],
     code: gh("expense-tracker-android"),
+    evidence: {
+      path: "app/src/main/java/com/nebin/expensetracker/data/local/ExpenseDao.kt",
+      lang: "kt",
+      line: 10,
+      files: 56,
+      code: [
+        "@Dao",
+        "interface ExpenseDao {",
+        "",
+        "    @Query(\"SELECT * FROM expenses ORDER BY date DESC, id DESC\")",
+        "    fun getAllExpenses(): Flow<List<Expense>>",
+        "",
+        "    @Query(\"SELECT * FROM expenses WHERE id = :expenseId LIMIT 1\")",
+        "    suspend fun getExpenseById(expenseId: Long): Expense?",
+        "",
+        "    @Insert",
+        "    suspend fun insertExpense(expense: Expense): Long",
+        "",
+        "    @Update",
+      ],
+    },
   },
   {
     id: "library-management-system",
@@ -291,6 +389,27 @@ export const projects: Project[] = [
     stack: ["Java", "JDBC", "SQLite"],
     areas: ["Tools"],
     code: gh("library-management-system"),
+    evidence: {
+      path: "src/main/java/com/library/service/FineCalculator.java",
+      lang: "java",
+      line: 24,
+      files: 18,
+      code: [
+        "    public static double calculate(LocalDate dueDate, LocalDate returnDate) {",
+        "        return calculate(dueDate, returnDate, DEFAULT_RATE_PER_DAY);",
+        "    }",
+        "",
+        "    public static double calculate(LocalDate dueDate, LocalDate returnDate, double ratePerDay) {",
+        "        if (dueDate == null || returnDate == null) {",
+        "            throw new IllegalArgumentException(\"dueDate and returnDate must not be null\");",
+        "        }",
+        "        long daysLate = ChronoUnit.DAYS.between(dueDate, returnDate);",
+        "        if (daysLate <= 0) {",
+        "            return 0.0;",
+        "        }",
+        "        return daysLate * ratePerDay;",
+      ],
+    },
   },
   {
     id: "finance-analyzer-cli",
@@ -303,6 +422,27 @@ export const projects: Project[] = [
     stack: ["Python", "pandas", "matplotlib"],
     areas: ["Tools"],
     code: gh("finance-analyzer-cli"),
+    evidence: {
+      path: "financeanalyzer/analyzer.py",
+      lang: "py",
+      line: 47,
+      files: 17,
+      code: [
+        "def get_category_breakdown(df: pd.DataFrame) -> pd.DataFrame:",
+        "    \"\"\"Return expense totals per category with each category's % of total spend.\"\"\"",
+        "    expenses = df[df[\"type\"] == \"expense\"]",
+        "    total = expenses[\"amount\"].sum()",
+        "",
+        "    breakdown = (",
+        "        expenses.groupby(\"category\")[\"amount\"]",
+        "        .sum()",
+        "        .reset_index()",
+        "        .rename(columns={\"amount\": \"total\"})",
+        "        .sort_values(\"total\", ascending=False)",
+        "        .reset_index(drop=True)",
+        "    )",
+      ],
+    },
   },
 ];
 

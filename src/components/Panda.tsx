@@ -1,8 +1,8 @@
 // The panda in a straw hat from the GitHub profile banner, redrawn from the
-// same shapes and kept small everywhere except the About illustration:
-// the header mark, a sled between sections, and a peek over the footer drift.
+// same shapes. It works at a laptop in About, sleds the hills and the
+// timeline, and peeks over the footer drift.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 export function HatGradient({ id }: { id: string }) {
@@ -15,10 +15,12 @@ export function HatGradient({ id }: { id: string }) {
   );
 }
 
+const OUTLINE = { stroke: "#6F97B4", strokeOpacity: 0.45, strokeWidth: 2 };
+
 type HeadProps = {
   hatId: string;
   blink?: boolean;
-  /** Lets the eye highlights follow the pointer (see PandaScene). */
+  /** Lets the eye highlights follow the pointer (see PandaAtWork). */
   look?: boolean;
   snowOnHat?: boolean;
 };
@@ -27,8 +29,8 @@ type HeadProps = {
 export function PandaHead({ hatId, blink = false, look = false, snowOnHat = false }: HeadProps) {
   return (
     <>
-      <circle cx="915" cy="293" r="18" fill="#0A1119" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" />
-      <circle cx="1045" cy="293" r="18" fill="#0A1119" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" />
+      <circle cx="915" cy="293" r="18" fill="#0A1119" {...OUTLINE} />
+      <circle cx="1045" cy="293" r="18" fill="#0A1119" {...OUTLINE} />
       <ellipse cx="980" cy="304" rx="63" ry="55" fill="#F6FAFC" stroke="#5E7C93" strokeOpacity="0.55" strokeWidth="2.5" />
       <ellipse cx="956" cy="303" rx="12.5" ry="16" fill="#131C26" transform="rotate(22 956 303)" />
       <ellipse cx="1004" cy="303" rx="12.5" ry="16" fill="#131C26" transform="rotate(-22 1004 303)" />
@@ -55,21 +57,9 @@ export function PandaHead({ hatId, blink = false, look = false, snowOnHat = fals
   );
 }
 
-/** Small mark for the header. Decorative: the name next to it carries the meaning. */
-export function PandaMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="872 196 216 172" className={className} aria-hidden="true" focusable="false">
-      <defs>
-        <HatGradient id="hat-mark" />
-      </defs>
-      <PandaHead hatId="hat-mark" />
-    </svg>
-  );
-}
-
 /**
  * The panda on a sled, drawn around its own origin so the point where the
- * runner meets the snow is (0, 0). Scenery.tsx slides it along a hill.
+ * runner meets the snow is (0, 0). It faces right.
  */
 export function SledPanda({ hatId }: { hatId: string }) {
   return (
@@ -86,19 +76,49 @@ export function SledPanda({ hatId }: { hatId: string }) {
   );
 }
 
+/** A pine, drawn from its tip downwards. Must sit inside an element that sets `fill`. */
+export function Pine({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  return (
+    <path
+      transform={`translate(${x} ${y}) scale(${scale})`}
+      d="M0 0 L-10 17 H-5 L-15 34 H-8 L-19 52 H-3 V60 H3 V52 H19 L8 34 H15 L5 17 H10 Z"
+    />
+  );
+}
+
+/** One slot in the scroll sequence: see `.act` in globals.css. */
+const act = (k: number, extra?: CSSProperties) => ({ "--k": k, ...extra }) as CSSProperties;
+
+/** A small card that lifts out of the laptop and settles beside the panda. (x, y) is where it ends up. */
+function Chip({ k, x, y, label, children }: { k: number; x: number; y: number; label: string; children: React.ReactNode }) {
+  return (
+    <g className="act act-chip" style={act(k, { "--fx": `${980 - x}px`, "--fy": `${396 - y}px` } as CSSProperties)}>
+      <g className="bob" style={{ animationDelay: `${-k * 0.9}s` }}>
+        <g transform={`translate(${x} ${y})`}>
+          <rect x="-34" y="-25" width="68" height="50" rx="9" fill="var(--card)" stroke="var(--edge)" strokeWidth="1.5" />
+          {children}
+          <text y="45" textAnchor="middle" fontSize="15" fontWeight="700" fill="var(--ink)" fontFamily="var(--font-sans)">
+            {label}
+          </text>
+        </g>
+      </g>
+    </g>
+  );
+}
+
 const FLAKES = [
-  [812, 2.4, 9, -1.2, 10], [846, 1.6, 13, -7.5, -14], [884, 3, 8, -4.1, 22], [921, 1.8, 12, -9.3, -8],
-  [958, 2.2, 10, -2.6, 16], [996, 1.5, 14, -11.2, -20], [1031, 2.8, 8.5, -5.8, 12], [1066, 1.9, 11.5, -0.4, -10],
-  [1102, 2.5, 9.5, -6.9, 18], [1139, 1.7, 13.5, -3.3, -16], [1161, 2.1, 10.5, -8.4, 8], [831, 2, 11, -5.2, 14],
-  [902, 2.6, 9, -10.1, -12], [1015, 2.3, 12.5, -7.7, 20], [1087, 1.6, 10, -1.9, -18], [1124, 2.9, 8, -9.9, 6],
+  [812, 2.4, 9, -1.2, 10], [884, 3, 8, -4.1, 22], [958, 2.2, 10, -2.6, 16], [1031, 2.8, 8.5, -5.8, 12],
+  [1102, 2.5, 9.5, -6.9, 18], [1161, 2.1, 10.5, -8.4, 8], [846, 1.6, 13, -7.5, -14], [1066, 1.9, 11.5, -0.4, -10],
 ];
 
 /**
- * The About illustration: the panda from the GitHub avatar, sitting in the
- * snow. Its eyes follow the pointer and it blinks now and then. It takes
- * the place a portrait photo would usually have.
+ * The About figure. It is a little performance tied to scrolling: the
+ * laptop opens, its mark lights up, and the three kinds of thing built on
+ * it (web, IoT, ML) lift off the screen one by one before a flag goes in
+ * the snow. The eyes follow the pointer throughout. Without scroll-linked
+ * animation, or with reduced motion, it is simply drawn in its final state.
  */
-export function PandaScene({ className }: { className?: string }) {
+export function PandaAtWork({ className }: { className?: string }) {
   const ref = useRef<SVGSVGElement>(null);
   const reduced = usePrefersReducedMotion();
 
@@ -110,9 +130,9 @@ export function PandaScene({ className }: { className?: string }) {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const r = svg.getBoundingClientRect();
-        // The face sits about 39% of the way down the illustration.
+        // The face sits about 43% of the way down the drawing.
         const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height * 0.39);
+        const dy = e.clientY - (r.top + r.height * 0.43);
         const dist = Math.hypot(dx, dy) || 1;
         const reach = Math.min(dist / 240, 1);
         svg.style.setProperty("--look-x", ((dx / dist) * reach * 3.4).toFixed(2));
@@ -129,54 +149,86 @@ export function PandaScene({ className }: { className?: string }) {
   return (
     <svg
       ref={ref}
-      viewBox="780 110 400 500"
+      viewBox="770 100 420 430"
       className={className}
       role="img"
-      aria-label="Illustration of a panda in a straw hat sitting in falling snow, the avatar Nebin uses on GitHub."
+      aria-label="A panda in a straw hat working at a laptop in the snow. Around it float the three kinds of thing it builds: web, IoT and machine learning."
     >
       <defs>
-        <HatGradient id="hat-scene" />
-        <linearGradient id="scene-sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--sky-top)" />
-          <stop offset="1" stopColor="var(--sky-bottom)" />
-        </linearGradient>
-        <linearGradient id="scene-drift" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--drift-top)" />
-          <stop offset="1" stopColor="var(--drift-bottom)" />
-        </linearGradient>
+        <HatGradient id="hat-work" />
+        <radialGradient id="work-glow">
+          <stop offset="0" stopColor="var(--straw-soft)" stopOpacity="0.75" />
+          <stop offset="1" stopColor="var(--straw-soft)" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
-      <rect x="780" y="110" width="400" height="500" fill="url(#scene-sky)" />
-
-      <g className="hidden night:block" fill="#EEF4F8">
-        {[[820, 150, 1.4, 3.1], [905, 190, 1, 4.2], [1010, 140, 1.6, 3.6], [1090, 205, 1.1, 5], [1150, 160, 1.4, 2.8], [860, 250, 1, 4.6], [1125, 270, 1.2, 3.9]].map(
-          ([x, y, r, d]) => (
-            <circle key={`${x}-${y}`} className="twinkle" cx={x} cy={y} r={r} opacity="0.6" style={{ animationDuration: `${d}s` }} />
-          )
-        )}
-      </g>
-
-      <path d="M780 392 C 860 356, 930 404, 1010 374 S 1120 346, 1180 380 V620 H780 Z" fill="var(--ridge-far)" />
+      {/* a rise of snow behind, so the figure has ground to sit on without a frame */}
+      <path d="M790 478 C 850 400, 930 372, 1000 386 S 1130 410, 1170 478 Z" fill="var(--ridge-near)" />
       <g fill="var(--pine)">
-        <Pine x={836} y={332} scale={1.5} />
-        <Pine x={1128} y={318} scale={1.25} />
-        <Pine x={1086} y={338} scale={0.9} />
+        <Pine x={842} y={372} scale={1.15} />
+        <Pine x={1118} y={366} scale={0.95} />
       </g>
-      <path d="M780 436 C 880 410, 960 450, 1060 426 S 1150 416, 1180 434 V620 H780 Z" fill="var(--ridge-near)" />
 
-      {/* body: sitting, arms resting, feet tucked into the drift */}
-      <ellipse cx="980" cy="400" rx="84" ry="66" fill="#131C26" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" />
+      {/* the panda */}
+      <ellipse cx="980" cy="400" rx="84" ry="66" fill="#131C26" {...OUTLINE} />
       <ellipse cx="980" cy="412" rx="47" ry="45" fill="#F2F0E8" />
-      <ellipse cx="921" cy="420" rx="25" ry="35" fill="#131C26" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" transform="rotate(16 921 420)" />
-      <ellipse cx="1039" cy="420" rx="25" ry="35" fill="#131C26" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" transform="rotate(-16 1039 420)" />
-      <ellipse cx="943" cy="462" rx="27" ry="17" fill="#0A1119" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" />
-      <ellipse cx="1017" cy="462" rx="27" ry="17" fill="#0A1119" stroke="#6F97B4" strokeOpacity="0.45" strokeWidth="2" />
-      <PandaHead hatId="hat-scene" blink look snowOnHat />
+      <ellipse cx="910" cy="470" rx="26" ry="15" fill="#0A1119" {...OUTLINE} />
+      <ellipse cx="1050" cy="470" rx="26" ry="15" fill="#0A1119" {...OUTLINE} />
+      <g className="typing">
+        <ellipse cx="926" cy="424" rx="23" ry="36" fill="#131C26" {...OUTLINE} transform="rotate(24 926 424)" />
+      </g>
+      <g className="typing typing-late">
+        <ellipse cx="1034" cy="424" rx="23" ry="36" fill="#131C26" {...OUTLINE} transform="rotate(-24 1034 424)" />
+      </g>
+      <g className="act act-nod" style={act(5)}>
+        <PandaHead hatId="hat-work" blink look snowOnHat />
+      </g>
 
-      <path
-        d="M780 474 C 860 446, 960 484, 1060 460 S 1150 450, 1180 468 V620 H780 Z"
-        fill="url(#scene-drift)"
-      />
+      {/* the laptop, seen from behind: the lid opens, then its mark lights up */}
+      <ellipse className="act act-glow" style={act(1)} cx="980" cy="392" rx="96" ry="40" fill="url(#work-glow)" />
+      <g className="act act-lid" style={act(0)}>
+        <rect x="924" y="394" width="112" height="74" rx="8" fill="#1D3349" stroke="#6F97B4" strokeWidth="1.5" />
+        <g transform="translate(980 431)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M-9 9V-9l18 18V-9" stroke="#6F97B4" strokeWidth="3.5" />
+          <g className="act act-lit" style={act(1)}>
+            <path d="M-9 9V-9l18 18V-9" stroke="#ECC273" strokeWidth="3.5" />
+            <circle cx="9" cy="-9" r="4.2" fill="#ECC273" />
+          </g>
+        </g>
+      </g>
+      <path d="M914 466 H1046 L1054 480 Q1055 485 1050 485 H910 Q905 485 906 480 Z" fill="#24405A" stroke="#6F97B4" strokeWidth="1.5" />
+
+      <path d="M782 496 C 850 460, 1110 460, 1178 496 C 1110 520, 850 520, 782 496 Z" fill="var(--drift-top)" />
+
+      {/* the flag that goes in when it ships */}
+      <g className="act act-flag" style={act(5)}>
+        <path d="M1108 492 V420" stroke="#0B1622" strokeWidth="3" strokeLinecap="round" />
+        <path d="M1109 422 L1150 435 L1109 449 Z" fill="var(--straw)" stroke="#0B1622" strokeWidth="1.75" strokeLinejoin="round" />
+      </g>
+
+      {/* what gets built */}
+      <Chip k={2} x={826} y={300} label="Web">
+        <path d="M-34 -11 H34" stroke="var(--edge)" strokeWidth="1.5" />
+        <circle cx="-25" cy="-18" r="2" fill="var(--straw)" />
+        <circle cx="-18" cy="-18" r="2" fill="var(--edge)" />
+        <path d="M-24 -1 H10 M-24 8 H22 M-24 16 H0" stroke="var(--ink)" strokeWidth="2.5" strokeLinecap="round" />
+      </Chip>
+      <Chip k={3} x={1134} y={292} label="IoT">
+        <rect x="-11" y="-9" width="22" height="22" rx="3.5" fill="none" stroke="var(--ink)" strokeWidth="2.5" />
+        <path d="M-17 -2 H-11 M-17 6 H-11 M11 -2 H17 M11 6 H17 M-4 13 V19 M4 13 V19" stroke="var(--ink)" strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx="0" cy="2" r="3" fill="var(--straw)" />
+        <path d="M-9 -14 Q0 -22 9 -14" fill="none" stroke="var(--straw)" strokeWidth="2.2" strokeLinecap="round" />
+      </Chip>
+      <Chip k={4} x={980} y={146} label="ML">
+        <path d="M-22 14 L-10 2 L0 8 L22 -14" fill="none" stroke="var(--straw)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <g fill="var(--ink)">
+          <circle cx="-20" cy="5" r="2.4" />
+          <circle cx="-8" cy="-8" r="2.4" />
+          <circle cx="3" cy="-2" r="2.4" />
+          <circle cx="10" cy="12" r="2.4" />
+          <circle cx="20" cy="-4" r="2.4" />
+        </g>
+      </Chip>
 
       <g fill="var(--flake)" aria-hidden="true">
         {FLAKES.map(([x, r, duration, delay, drift]) => (
@@ -184,16 +236,10 @@ export function PandaScene({ className }: { className?: string }) {
             key={`${x}-${delay}`}
             className="snow-fall"
             cx={x}
-            cy={reduced ? 140 + ((x * 7) % 420) : 96}
+            cy={reduced ? 130 + ((x * 7) % 330) : 86}
             r={r}
-            opacity="0.85"
-            style={
-              {
-                animationDuration: `${duration}s`,
-                animationDelay: `${delay}s`,
-                "--drift": `${drift}px`,
-              } as React.CSSProperties
-            }
+            opacity="0.8"
+            style={{ animationDuration: `${duration}s`, animationDelay: `${delay}s`, "--drift": `${drift}px` } as CSSProperties}
           />
         ))}
       </g>
@@ -201,25 +247,11 @@ export function PandaScene({ className }: { className?: string }) {
   );
 }
 
-/** A pine, drawn from its tip downwards. Must sit inside an element that sets `fill`. */
-export function Pine({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
-  return (
-    <path
-      transform={`translate(${x} ${y}) scale(${scale})`}
-      d="M0 0 L-10 17 H-5 L-15 34 H-8 L-19 52 H-3 V60 H3 V52 H19 L8 34 H15 L5 17 H10 Z"
-    />
-  );
-}
-
 /** The footer scene: the panda comes up over a snow drift, as on the profile banner. */
 export function PandaDrift() {
   return (
     <div className="relative h-36 overflow-y-clip sm:h-44" aria-hidden="true">
-      <svg
-        viewBox="872 196 216 172"
-        className="peek-up absolute bottom-[38%] right-[14%] h-[62%]"
-        focusable="false"
-      >
+      <svg viewBox="872 196 216 172" className="peek-up absolute bottom-[38%] right-[14%] h-[62%]" focusable="false">
         <defs>
           <HatGradient id="hat-drift" />
         </defs>
